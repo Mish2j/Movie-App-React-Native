@@ -5,6 +5,7 @@ import {
   SEARCH_MOVIE,
   TOP_RATED_MOVIES,
   UPCOMING_MOVIES,
+  MOVIE_WITH_GENRE,
 } from "../constants/config";
 
 export const getPopularMovies = async () => {
@@ -28,6 +29,11 @@ export const getUpcomingMovies = async () => {
 };
 
 export const getSearchedMovie = async (movieName) => {
-  const response = await axios.get(SEARCH_MOVIE + movieName);
+  const response = await axios.get(`${SEARCH_MOVIE}${movieName}`);
+  return response.data.results;
+};
+
+export const getFilteredMovies = async (categoryId) => {
+  const response = await axios.get(`${MOVIE_WITH_GENRE}${categoryId}`);
   return response.data.results;
 };
