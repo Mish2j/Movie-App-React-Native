@@ -24,10 +24,11 @@ const SearchScreen = () => {
   useEffect(() => {
     // ADD DEBOUNCING
     // ADD error handling
-    console.log("before");
 
-    if (isEnteredKeywordEmpty) return;
-    console.log("after");
+    if (isEnteredKeywordEmpty) {
+      setSearchedMovies([]);
+      return;
+    }
 
     const getData = async () => {
       try {
@@ -45,10 +46,6 @@ const SearchScreen = () => {
 
     getData();
   }, [enteredKeyword]);
-
-  const inputStylesHandler = () => {};
-
-  // console.log(isLoading);
 
   content = (
     <View style={styles.emptyList}>
@@ -83,7 +80,6 @@ const SearchScreen = () => {
           placeholder="Search"
           autoCorrect={false}
           onChangeText={userInputHandler}
-          onFocus={inputStylesHandler}
           placeholderTextColor={COLORS.textDark}
         />
       </View>

@@ -1,14 +1,11 @@
-import axios from "axios";
 import { useState, useContext } from "react";
 import { ScrollView, View, StyleSheet, Text, Image } from "react-native";
-import { WebView } from "react-native-webview";
+import YoutubePlayer from "react-native-youtube-iframe";
+
 import { MyMovieListContext } from "../store/myMovies-context";
+import { getMovieDetails } from "../util/http";
 import { COLORS } from "../constants/styles";
-import {
-  IMAGE_URL,
-  MOVIE_DETAIL_POST,
-  MOVIE_DETAIL_PRE,
-} from "../constants/config";
+import { IMAGE_URL, MOVIE_VIDEO } from "../constants/config";
 
 import IconButton from "../components/UI/IconButton";
 import BodyWrapper from "../components/UI/BodyWrapper";
@@ -16,6 +13,8 @@ import Title from "../components/UI/Title";
 
 const MovieScreen = ({ route, navigation }) => {
   const [isPlaying, setIsPlaying] = useState(false);
+  const [videoId, setVideoId] = useState(null);
+
   const movieData = route.params?.movieData;
   const myListContext = useContext(MyMovieListContext);
 
@@ -34,11 +33,9 @@ const MovieScreen = ({ route, navigation }) => {
 
   const playVideo = async () => {
     try {
-      const response = await axios.get(
-        `${MOVIE_DETAIL_PRE}${movieData.id}${MOVIE_DETAIL_POST}`
-      );
-      // .videos.results[0].key
-      // console.log(response.data);
+      const movieDetails = await getMovieDetails(movieData.id);
+
+      setVideoId(movieDetails.videos?.results[0]?.key);
     } catch (error) {
       console.log(error);
     }
@@ -46,36 +43,30 @@ const MovieScreen = ({ route, navigation }) => {
 
   const pauseVideo = () => {};
 
-  const videoPlayerHandler = async () => {
+  const videoPlayerHandler = () => {
     if (!isPlaying) {
       playVideo();
       setIsPlaying(true);
       return;
     }
 
-    pauseVideo();
+    // pauseVideo();
     setIsPlaying(false);
   };
 
   return (
     <View style={styles.container}>
       <View style={styles.videoContainer}>
-        {!isPlaying && (
-          <Image
-            style={{ width: "100%", height: "100%" }}
-            source={{ uri: `${IMAGE_URL}${movieData.backdrop_path}` }}
-          />
-        )}
-        {isPlaying && (
-          <WebView
-            source={{
-              uri: "https://www.youtube.com/watch?v=cAXka5yNPuQ&ab_channel=BMWBLOG",
-            }}
-            allowsFullscreenVideo={true}
-            pullToRefreshEnabled={true}
-            style={{ width: "100%", height: "100%", marginTop: -49 }}
-          />
-        )}
+        <YoutubePlayer
+          height={"100%"}
+          width={"100%"}
+          play={isPlaying}
+          // style={styles.video}
+          // source={{ uri: `${MOVIE_VIDEO}${videoId}` }}
+          endWithThumbnail
+          videoId={videoId}
+          thumbnail={{ uri: `${IMAGE_URL}${movieData.backdrop_path}` }}
+        />
       </View>
       <BodyWrapper color={COLORS.primaryDark}>
         <ScrollView>
@@ -121,9 +112,14 @@ const styles = StyleSheet.create({
   },
   videoContainer: {
     width: "100%",
-    height: 250,
+    height: 218,
     backgroundColor: COLORS.primaryLight,
-    marginBottom: 15,
+    // marginBottom: 15,
+  },
+  video: {
+    width: "100%",
+    height: "100%",
+    flex: 1,
   },
   btnsContainer: {
     flexDirection: "row",

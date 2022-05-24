@@ -6,6 +6,7 @@ import TabNavigator from "../bottomTab/TabNavigator";
 import ProfileScreen from "../../screens/ProfileScreen";
 import MyMoviesScreen from "../../screens/MyMoviesScreen";
 import MovieScreen from "../../screens/MovieScreen";
+import AuthScreen from "../../screens/AuthScreen";
 
 const Stack = createNativeStackNavigator();
 
@@ -19,6 +20,7 @@ const StackNavigator = () => {
 
   return (
     <Stack.Navigator screenOptions={screenOptions}>
+      <Stack.Screen name="Auth" component={AuthScreen} />
       <Stack.Screen
         name="Tab"
         component={TabNavigator}

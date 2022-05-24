@@ -1,20 +1,24 @@
-import {
-  ScrollView,
-  View,
-  ImageBackground,
-  Text,
-  StyleSheet,
-} from "react-native";
+import { StyleSheet, View } from "react-native";
 
 import { COLORS } from "../constants/styles";
 
-import CategoryList from "../components/CategoryList";
-import BodyWrapper from "../components/UI/BodyWrapper";
+import AuthForm from "../components/auth/AuthForm";
 
 const AuthScreen = () => {
-  return <Text>Auth Screen</Text>;
+  return (
+    <View style={styles.container}>
+      <AuthForm />
+    </View>
+  );
 };
 
-const styles = StyleSheet.create({});
-
 export default AuthScreen;
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: COLORS.primaryDark,
+  },
+});

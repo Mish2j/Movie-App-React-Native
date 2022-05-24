@@ -11,6 +11,7 @@ export const SEARCH_MOVIE = `${BASE_URL}search/movie?api_key=${API_KEY}${BASE_QU
 export const MOVIE_DETAIL_PRE = `${BASE_URL}movie/`;
 export const MOVIE_DETAIL_POST = `?api_key=${API_KEY}${VIDEO_QUERY}`;
 export const MOVIE_WITH_GENRE = `${BASE_URL}discover/movie?api_key=${API_KEY}&language=en-US&with_genres=`;
+export const MOVIE_VIDEO = `https://www.youtube.com/watch?v=`;
 
 // get similar movies
 // https://api.themoviedb.org/3/movie/{movie_id}/similar?api_key=<<api_key>>&language=en-US&page=1
