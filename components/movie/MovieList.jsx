@@ -5,6 +5,7 @@ import {
   StyleSheet,
   Pressable,
   Text,
+  ActivityIndicator,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 
@@ -12,7 +13,7 @@ import { IMAGE_URL } from "../../constants/config";
 import { COLORS } from "../../constants/styles";
 import Title from "../UI/Title";
 
-const MovieList = ({ heading, isHorizontal = false, movies }) => {
+const MovieList = ({ heading, isHorizontal = false, movies, isLoading }) => {
   const { navigate } = useNavigation();
 
   const selectedMovieHandler = (movie) => {
@@ -26,16 +27,20 @@ const MovieList = ({ heading, isHorizontal = false, movies }) => {
         style={({ pressed }) => pressed && styles.pressed}
       >
         <View style={isHorizontal ? { marginRight: 10 } : { margin: 2.5 }}>
-          {itemData.item.poster_path ? (
-            <Image
-              style={styles.image}
-              source={{ uri: `${IMAGE_URL}${itemData.item.poster_path}` }}
-            />
-          ) : (
-            <View style={styles.noImageContainer}>
-              <Text style={styles.noImageText}>Poster Not Available</Text>
-            </View>
-          )}
+          <View style={styles.imageContainer}>
+            {isLoading && (
+              <ActivityIndicator size="large" color={COLORS.textDark} />
+            )}
+            {!isLoading &&
+              (itemData.item.poster_path ? (
+                <Image
+                  style={styles.image}
+                  source={{ uri: `${IMAGE_URL}${itemData.item.poster_path}` }}
+                />
+              ) : (
+                <Text style={styles.noImageText}>Poster Not Available</Text>
+              ))}
+          </View>
         </View>
       </Pressable>
     );
@@ -61,18 +66,18 @@ const styles = StyleSheet.create({
   container: {
     marginBottom: 25,
   },
-  image: {
-    borderRadius: 7,
-    width: 120,
-    height: 180,
-  },
-  noImageContainer: {
+  imageContainer: {
     borderRadius: 7,
     width: 120,
     height: 180,
     justifyContent: "center",
     alignItems: "center",
     backgroundColor: COLORS.primaryLight,
+  },
+  image: {
+    borderRadius: 7,
+    width: 120,
+    height: 180,
   },
   noImageText: {
     fontSize: 18,

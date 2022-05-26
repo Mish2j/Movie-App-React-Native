@@ -20,11 +20,13 @@ import BodyWrapper from "../components/UI/BodyWrapper";
 import MovieCategoryList from "../components/movie/MovieCategoryList";
 
 const HomeScreen = () => {
+  const [isLoading, setIsloading] = useState(true);
   const [movies, setMovies] = useState({
     popularMovies: [],
     topRatedMovies: [],
     upcomingMovies: [],
   });
+
   const [filteredMovies, setFilteredMovies] = useState({
     categoryName: "",
     movies: [],
@@ -35,6 +37,7 @@ const HomeScreen = () => {
     if (filteredMovies.movies.length > 0) return;
 
     const getData = async () => {
+      setIsloading(true);
       try {
         const popularMovies = await getPopularMovies();
         const topRatedMovies = await getTopRatedMovies();
@@ -46,6 +49,8 @@ const HomeScreen = () => {
         });
       } catch (error) {
         console.log(error);
+      } finally {
+        setIsloading(false);
       }
     };
 
@@ -86,16 +91,19 @@ const HomeScreen = () => {
         {filteredMovies.movies.length === 0 && (
           <>
             <MovieList
+              isLoading={isLoading}
               isHorizontal={true}
               heading="Popular"
               movies={movies.popularMovies}
             />
             <MovieList
+              isLoading={isLoading}
               isHorizontal={true}
               heading="Top Rated"
               movies={movies.topRatedMovies}
             />
             <MovieList
+              isLoading={isLoading}
               isHorizontal={true}
               heading="Upcoming"
               movies={movies.upcomingMovies}

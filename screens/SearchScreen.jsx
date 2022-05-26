@@ -10,11 +10,12 @@ import BodyWrapper from "../components/UI/BodyWrapper";
 
 const SearchScreen = () => {
   const [isLoading, setIsLoading] = useState(false);
-  const [searchedMovies, setSearchedMovies] = useState([]);
+  const [foundMovies, setFoundMovies] = useState([]);
   const [enteredKeyword, setEnteredKeyword] = useState("");
 
   const isEnteredKeywordEmpty = enteredKeyword.trim().length === 0;
-  const isMoviesEmpty = searchedMovies.length === 0;
+  const isMoviesEmpty = foundMovies.length === 0;
+
   let content;
 
   const userInputHandler = (userInput) => {
@@ -26,7 +27,7 @@ const SearchScreen = () => {
     // ADD error handling
 
     if (isEnteredKeywordEmpty) {
-      setSearchedMovies([]);
+      setFoundMovies([]);
       return;
     }
 
@@ -36,7 +37,7 @@ const SearchScreen = () => {
 
         const moviesData = await getSearchedMovie(enteredKeyword);
 
-        setSearchedMovies(moviesData);
+        setFoundMovies(moviesData);
       } catch (error) {
         Alert.alert("Request Error.", error.message);
       } finally {
@@ -63,7 +64,7 @@ const SearchScreen = () => {
   );
 
   if (!isMoviesEmpty) {
-    content = <MovieList movies={searchedMovies} />;
+    content = <MovieList isLoading={isLoading} movies={foundMovies} />;
   }
 
   return (

@@ -19,6 +19,9 @@ export const MOVIE_VIDEO = `https://www.youtube.com/watch?v=`;
 // get movie images
 // https://api.themoviedb.org/3/movie/{movie_id}/images?api_key=<<api_key>>&language=en-US
 
+const AUTH_KEY = "AIzaSyCP4hPvdzEt2XRQ43tu5skMc2t2kdCIHFE";
+export const AUTH_URL = `https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=${AUTH_KEY}`;
+
 export const MOVIE_GENRES = [
   { id: 1, name: "All" },
   { id: 28, name: "Action" },

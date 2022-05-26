@@ -4,11 +4,16 @@ import { COLORS } from "../../constants/styles";
 
 // CHECK DOCS...
 
-const Input = ({ label }) => {
+const Input = ({ label, onUpdateValue, ...inputProps }) => {
   return (
     <View style={styles.inputContainer}>
       <Text style={styles.label}>{label}</Text>
-      <TextInput style={styles.input} autoCapitalize="none" />
+      <TextInput
+        {...inputProps}
+        onChangeText={onUpdateValue}
+        style={styles.input}
+        autoCapitalize="none"
+      />
     </View>
   );
 };
@@ -26,7 +31,6 @@ const styles = StyleSheet.create({
   },
   input: {
     borderRadius: 5,
-    // backgroundColor: COLORS.primaryDark,
     borderBottomWidth: 2,
     borderBottomColor: COLORS.textLight,
     color: COLORS.textLight,
