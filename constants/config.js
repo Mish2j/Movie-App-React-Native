@@ -8,8 +8,8 @@ export const POPULAR_MOVIES = `${BASE_URL}movie/popular?api_key=${API_KEY}${BASE
 export const TOP_RATED_MOVIES = `${BASE_URL}movie/top_rated?api_key=${API_KEY}${BASE_QUERY}`;
 export const UPCOMING_MOVIES = `${BASE_URL}movie/upcoming?api_key=${API_KEY}${BASE_QUERY}`;
 export const SEARCH_MOVIE = `${BASE_URL}search/movie?api_key=${API_KEY}${BASE_QUERY}&query=`;
-export const MOVIE_DETAIL_PRE = `${BASE_URL}movie/`;
-export const MOVIE_DETAIL_POST = `?api_key=${API_KEY}${VIDEO_QUERY}`;
+export const MOVIE_DETAIL_BASE = `${BASE_URL}movie/`;
+export const MOVIE_DETAIL_QUERY = `?api_key=${API_KEY}${VIDEO_QUERY}`;
 export const MOVIE_WITH_GENRE = `${BASE_URL}discover/movie?api_key=${API_KEY}&language=en-US&with_genres=`;
 export const MOVIE_VIDEO = `https://www.youtube.com/watch?v=`;
 
@@ -20,7 +20,9 @@ export const MOVIE_VIDEO = `https://www.youtube.com/watch?v=`;
 // https://api.themoviedb.org/3/movie/{movie_id}/images?api_key=<<api_key>>&language=en-US
 
 const AUTH_KEY = "AIzaSyCP4hPvdzEt2XRQ43tu5skMc2t2kdCIHFE";
-export const AUTH_URL = `https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=${AUTH_KEY}`;
+const AUTH_URL_BASE = `https://identitytoolkit.googleapis.com/v1/accounts:`;
+export const AUTH_SIGNUP = `${AUTH_URL_BASE}signUp?key=${AUTH_KEY}`;
+export const AUTH_SIGNIN = `${AUTH_URL_BASE}signInWithPassword?key=${AUTH_KEY}`;
 
 export const MOVIE_GENRES = [
   { id: 1, name: "All" },

@@ -1,35 +1,74 @@
-import { useState } from "react";
-import { Text, View, StyleSheet, Pressable } from "react-native";
+import { useState, useContext } from "react";
+import { Text, View, StyleSheet, Pressable, Alert } from "react-native";
 
 import { COLORS } from "../../constants/styles";
-import { createUser } from "../../util/http";
+import { createUser, loginUser } from "../../util/http";
+import { AuthContext } from "../../store/auth-context";
 
 import Input from "../UI/Input";
 import IconButton from "../UI/IconButton";
 
 const AuthForm = () => {
   const [isLogin, setIsLogin] = useState(true);
+  const [userCred, setUserCred] = useState({ email: "", password: "" });
+  const [isAuthenticating, setIsAuthenticating] = useState(false);
 
-  const signupHandler = (email, password) => {
-    createUser(email, password);
-  };
-
-  const loginHandler = () => {};
-
-  const emailHandler = (val) => {
-    console.log(val);
-  };
-
-  const formSubmitHandler = () => {
-    if (isLogin) {
-      return;
-    }
-
-    signupHandler();
-  };
+  const authCtx = useContext(AuthContext);
 
   const switchFormHandler = () => {
     setIsLogin((curState) => !curState);
+  };
+
+  const signupHandler = async (email, password) => {
+    try {
+      return createUser(email, password);
+    } catch (error) {
+      throw new Error("Try again later!");
+    }
+  };
+
+  const loginHandler = async (email, password) => {
+    try {
+      return loginUser(email, password);
+    } catch (error) {
+      throw new Error("Try again later!");
+    }
+  };
+
+  // ADD VALIDATION
+  const emailHandler = (userEmail) => {
+    setUserCred((curState) => ({ ...curState, email: userEmail }));
+  };
+
+  const passwordHandler = (userPassword) => {
+    setUserCred((curState) => ({ ...curState, password: userPassword }));
+  };
+
+  const confirmPasswordHandler = (userPasswordRepeat) => {};
+
+  const firstNameHandler = (userFirstName) => {};
+
+  const lastNameHandler = (userLastName) => {};
+
+  const formSubmitHandler = async () => {
+    try {
+      setIsAuthenticating(true);
+
+      let token = null;
+      if (isLogin) {
+        token = await loginHandler(userCred.email, userCred.password);
+      } else if (!isLogin) {
+        token = await signupHandler(userCred.email, userCred.password);
+      }
+
+      if (token) {
+        authCtx.loginUser(token);
+      }
+    } catch (error) {
+      Alert.alert("Login Failed!", error);
+    } finally {
+      setIsAuthenticating(false);
+    }
   };
 
   return (
@@ -37,18 +76,32 @@ const AuthForm = () => {
       {!isLogin && (
         <>
           <Input onUpdateValue={firstNameHandler} label="First Name" />
-          <Input label="Last Name" />
+          <Input onUpdateValue={lastNameHandler} label="Last Name" />
         </>
       )}
       <Input onUpdateValue={emailHandler} autoCorrect={false} label="Email" />
-      <Input label="Password" autoCorrect={false} secureTextEntry={true} />
+      <Input
+        onUpdateValue={passwordHandler}
+        label="Password"
+        autoCorrect={false}
+        secureTextEntry={true}
+      />
+
+      {!isLogin && (
+        <Input
+          label="Confirm Password"
+          autoCorrect={false}
+          secureTextEntry={true}
+          onUpdateValue={confirmPasswordHandler}
+        />
+      )}
 
       <IconButton
         onPress={formSubmitHandler}
         iconName={`${isLogin ? "log-in" : "person-add"}-outline`}
         iconColor={COLORS.primaryDark}
         iconSize={22}
-        text={isLogin ? "Login" : "Signup"}
+        text={isAuthenticating ? "Wait..." : isLogin ? "Login" : "Signup"}
         containerStyle={styles.formBtn}
         textStyle={styles.formBtnText}
       />

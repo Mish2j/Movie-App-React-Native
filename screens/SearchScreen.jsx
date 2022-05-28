@@ -18,7 +18,7 @@ const SearchScreen = () => {
 
   let content;
 
-  const userInputHandler = (userInput) => {
+  const movieSearchHandler = (userInput) => {
     setEnteredKeyword(userInput);
   };
 
@@ -80,7 +80,7 @@ const SearchScreen = () => {
           style={styles.input}
           placeholder="Search"
           autoCorrect={false}
-          onChangeText={userInputHandler}
+          onChangeText={movieSearchHandler}
           placeholderTextColor={COLORS.textDark}
         />
       </View>

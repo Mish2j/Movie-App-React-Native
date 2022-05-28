@@ -5,12 +5,12 @@ import BodyWrapper from "../components/UI/BodyWrapper";
 import IconButton from "../components/UI/IconButton";
 
 const ProfileScreen = ({ navigation }) => {
-  const navigationHandler = () => {
+  const navigateMyMoviesScreen = () => {
     navigation.navigate("MyMovies");
   };
 
-  const signOutHandler = () => {
-    console.log("Signing out...");
+  const navigateAccountScreen = () => {
+    navigation.navigate("Account");
   };
 
   return (
@@ -24,7 +24,7 @@ const ProfileScreen = ({ navigation }) => {
           <Text style={styles.userName}>User Name</Text>
         </View>
 
-        <View style={styles.buttonContainer}>
+        <View>
           <IconButton
             containerStyle={styles.textContainer}
             iconName="arrow-forward-outline"
@@ -32,7 +32,7 @@ const ProfileScreen = ({ navigation }) => {
             iconColor={COLORS.textLight}
             text="My List"
             textStyle={styles.text}
-            onPress={navigationHandler}
+            onPress={navigateMyMoviesScreen}
           />
 
           <IconButton
@@ -42,17 +42,9 @@ const ProfileScreen = ({ navigation }) => {
             iconColor={COLORS.textLight}
             text="Account"
             textStyle={styles.text}
-            onPress={navigationHandler}
+            onPress={navigateAccountScreen}
           />
         </View>
-        <IconButton
-          containerStyle={styles.signOutBtn}
-          iconName="log-out-outline"
-          iconSize={20}
-          iconColor={COLORS.textDark}
-          text="Sign Out"
-          onPress={signOutHandler}
-        />
       </View>
     </BodyWrapper>
   );
@@ -90,12 +82,6 @@ const styles = StyleSheet.create({
   text: {
     color: COLORS.textLight,
     fontSize: 16,
-  },
-  buttonContainer: {
-    marginBottom: 50,
-  },
-  signOutBtn: {
-    alignSelf: "center",
   },
 });
 

@@ -6,9 +6,10 @@ import {
   TOP_RATED_MOVIES,
   UPCOMING_MOVIES,
   MOVIE_WITH_GENRE,
-  MOVIE_DETAIL_PRE,
-  MOVIE_DETAIL_POST,
-  AUTH_URL,
+  MOVIE_DETAIL_BASE,
+  MOVIE_DETAIL_QUERY,
+  AUTH_SIGNIN,
+  AUTH_SIGNUP,
 } from "../constants/config";
 
 const fetchData = async (url) => {
@@ -17,33 +18,53 @@ const fetchData = async (url) => {
 };
 
 export const getPopularMovies = async () => {
-  return await fetchData(POPULAR_MOVIES).results;
+  const { results } = await fetchData(POPULAR_MOVIES);
+  return results;
 };
 
 export const getTopRatedMovies = async () => {
-  return await fetchData(TOP_RATED_MOVIES).results;
+  const { results } = await fetchData(TOP_RATED_MOVIES);
+  return results;
 };
 
 export const getUpcomingMovies = async () => {
-  return await fetchData(UPCOMING_MOVIES).results;
+  const { results } = await fetchData(UPCOMING_MOVIES);
+  return results;
 };
 
 export const getSearchedMovie = async (movieName) => {
-  return await fetchData(`${SEARCH_MOVIE}${movieName}`).results;
+  const { results } = await fetchData(`${SEARCH_MOVIE}${movieName}`);
+  return results;
 };
 
 export const getFilteredMovies = async (categoryId) => {
-  return await fetchData(`${MOVIE_WITH_GENRE}${categoryId}`).results;
+  const { results } = await fetchData(`${MOVIE_WITH_GENRE}${categoryId}`);
+  return results;
 };
 
 export const getMovieDetails = async (movieId) => {
-  return await fetchData(`${MOVIE_DETAIL_PRE}${movieId}${MOVIE_DETAIL_POST}`);
+  return await fetchData(`${MOVIE_DETAIL_BASE}${movieId}${MOVIE_DETAIL_QUERY}`);
 };
 
 export const createUser = async (email, password) => {
-  const response = await axios.post(AUTH_URL, {
+  const response = await axios.post(AUTH_SIGNUP, {
     email,
     password,
     returnSecureToken: true,
   });
+  const token = response.data.idToken;
+  // console.log(response.data);
+  return token;
+};
+
+export const loginUser = async (email, password) => {
+  const response = await axios.post(AUTH_SIGNIN, {
+    email,
+    password,
+    returnSecureToken: true,
+  });
+
+  const token = response.data.idToken;
+  console.log(response.data);
+  return token;
 };
