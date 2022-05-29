@@ -13,7 +13,7 @@ const initialState = {
 export const AuthContext = createContext(initialState);
 
 export const AuthContextProvider = ({ children }) => {
-  const [token, setToken] = useState(null);
+  const [token, setToken] = useState("asd"); // CHANGE
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
 

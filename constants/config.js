@@ -46,3 +46,7 @@ export const MOVIE_GENRES = [
   { id: 10752, name: "War" },
   { id: 37, name: "Western" },
 ];
+
+export const ERROR = {
+  REQUEST_FAILED: "Request Error!",
+};

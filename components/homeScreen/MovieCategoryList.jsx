@@ -57,7 +57,7 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     padding: 10,
     backgroundColor: COLORS.primaryLight,
-    marginBottom: 10,
+    marginVertical: 10,
   },
   categoryHeading: {
     alignSelf: "center",
