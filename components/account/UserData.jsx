@@ -44,6 +44,7 @@ export default UserData;
 const styles = StyleSheet.create({
   detailContainer: {
     marginVertical: 15,
+    paddingHorizontal: 3,
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",

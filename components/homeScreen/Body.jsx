@@ -17,7 +17,7 @@ import BodyWrapper from "../UI/BodyWrapper";
 import Loader from "../UI/Loader";
 
 const Body = () => {
-  const [isLoading, setIsloading] = useState(true);
+  const [isLoading, setIsloading] = useState(false);
   const [movies, setMovies] = useState({
     popularMovies: [],
     topRatedMovies: [],
@@ -33,7 +33,6 @@ const Body = () => {
   let content;
 
   useEffect(() => {
-    console.log("run");
     const getData = async () => {
       setIsloading(true);
       try {
@@ -73,6 +72,10 @@ const Body = () => {
     }
   };
 
+  if (isLoading) {
+    content = <Loader />;
+  }
+
   if (!isMoviesFiltered) {
     content = (
       <>
@@ -101,14 +104,11 @@ const Body = () => {
   if (isMoviesFiltered) {
     content = (
       <MovieList
+        isLoading={isLoading}
         heading={filteredMovies.categoryName}
         movies={filteredMovies.movies}
       />
     );
-  }
-
-  if (isLoading) {
-    content = <Loader />;
   }
 
   return (

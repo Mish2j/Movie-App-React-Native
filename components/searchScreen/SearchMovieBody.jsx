@@ -3,7 +3,9 @@ import { StyleSheet, Alert, View } from "react-native";
 
 import { ERROR } from "../../constants/config";
 import { getSearchedMovie } from "../../util/http";
+import { COLORS } from "../../constants/styles";
 
+import BodyWrapper from "../UI/BodyWrapper";
 import Loader from "../UI/Loader";
 import MovieList from "../movie/MovieList";
 import EmptyList from "./EmptyList";
@@ -59,10 +61,12 @@ const SearchMovieBody = () => {
   }
 
   return (
-    <View style={styles.contentContainer}>
-      <SearchBar onSearch={movieSearchHandler} />
-      {content}
-    </View>
+    <BodyWrapper color={COLORS.primaryDark}>
+      <View style={styles.contentContainer}>
+        <SearchBar onSearch={movieSearchHandler} />
+        {content}
+      </View>
+    </BodyWrapper>
   );
 };
 
