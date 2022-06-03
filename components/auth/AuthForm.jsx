@@ -19,7 +19,13 @@ const AuthForm = () => {
   const [formHasError, setFormHasError] = useState();
   const [emailError, setEmailError] = useState("");
   const [passwordError, setPasswordError] = useState("");
-  const [userCred, setUserCred] = useState({ email: "", password: "" });
+  const [userCred, setUserCred] = useState({
+    email: "",
+    password: "",
+    firstName: "",
+    lastName: "",
+  });
+  const [isPasswordHidden, setIsPasswordHidden] = useState(true);
   const [isAuthenticating, setIsAuthenticating] = useState(false);
 
   const authCtx = useContext(AuthContext);
@@ -28,17 +34,21 @@ const AuthForm = () => {
     setIsLogin((curState) => !curState);
   };
 
-  // const signupHandler = async (email, password) => {
-  //   try {
-  //     return createUser(email, password);
-  //   } catch (error) {
-  //     throw new Error("Try again later!");
-  //   }
-  // };
+  const showPasswordHandler = () => {
+    setIsPasswordHidden((currentState) => !currentState);
+  };
+
+  const signupHandler = async (email, password, fullName) => {
+    try {
+      return createUser(email, password, fullName);
+    } catch (error) {
+      throw new Error("Try again later!");
+    }
+  };
 
   const loginHandler = async (email, password) => {
     try {
-      // return loginUser(email, password);
+      return loginUser(email, password);
     } catch (error) {
       throw new Error(error);
     }
@@ -53,15 +63,17 @@ const AuthForm = () => {
     setUserCred((curState) => ({ ...curState, password: userPassword }));
   };
 
-  // const confirmPasswordHandler = (userPasswordRepeat) => {};
+  const confirmPasswordHandler = (userPasswordRepeat) => {};
 
-  // const firstNameHandler = (userFirstName) => {
-  //   // get first name
-  // };
+  const firstNameHandler = (userFirstName) => {
+    setUserCred((curState) => ({ ...curState, firstName: userFirstName }));
+  };
 
-  // const lastNameHandler = (userLastName) => {
-  //   // get last name
-  // };
+  const lastNameHandler = (userLastName) => {
+    setUserCred((curState) => ({ ...curState, lastName: userLastName }));
+  };
+
+  // const clearErrors = () => {};
 
   const validateForm = () => {
     const passErrMsg = validatePassword(userCred.password);
@@ -88,21 +100,26 @@ const AuthForm = () => {
     try {
       // // setIsAuthenticating(true);
 
-      // // let token = null;
+      let token = null;
 
-      // if (isLogin) {
-      //   // token = await loginHandler(userCred.email, userCred.password);
-      // } else if (!isLogin) {
-      //   // token = await signupHandler(userCred.email, userCred.password);
-      // }
+      if (isLogin) {
+        token = await loginHandler(userCred.email, userCred.password);
+      } else if (!isLogin) {
+        const fullName = `${userCred.firstName} ${userCred.lastName}`;
+        token = await signupHandler(
+          userCred.email,
+          userCred.password,
+          fullName
+        );
+      }
 
-      // if (token !== null) {
-      //   authCtx.loginUser(token);
-      // }
+      if (token !== null) {
+        authCtx.loginUser(token);
+      }
 
       console.log("loged in");
     } catch (error) {
-      setIsAuthenticating(false);
+      // setIsAuthenticating(false);
       const errorCode = error.code;
       const errorMessage = error.message;
       console.log(errorCode);
@@ -125,28 +142,55 @@ const AuthForm = () => {
         <View style={styles.box}>
           {!isLogin && (
             <>
-              <Input onUpdateValue={firstNameHandler} label="First Name" />
-              <Input onUpdateValue={lastNameHandler} label="Last Name" />
+              <Input
+                label="First Name"
+                autoFocus={!isLogin}
+                autoComplete="off"
+                autoCapitalize="none"
+                autoCorrect={false}
+                onUpdateValue={firstNameHandler}
+              />
+              <Input
+                autoComplete="off"
+                autoCapitalize="none"
+                autoCorrect={false}
+                onUpdateValue={lastNameHandler}
+                label="Last Name"
+              />
             </>
           )}
           <Input
-            onUpdateValue={emailHandler}
-            autoCorrect={false}
+            autoFocus={isLogin}
             label="Email"
+            autoComplete="off"
+            onUpdateValue={emailHandler}
+            autoCapitalize="none"
+            autoCorrect={false}
           />
           <Input
-            onUpdateValue={passwordHandler}
             label="Password"
+            autoComplete="off"
+            onUpdateValue={passwordHandler}
             autoCorrect={false}
-            secureTextEntry={true}
+            autoCapitalize="none"
+            secureTextEntry={isPasswordHidden}
           />
+          {/* <IconButton
+            iconName="eye-outline"
+            iconSize={20}
+            iconColor={COLORS.textLight}
+            onPress={showPasswordHandler}
+          /> */}
 
           {!isLogin && (
             <Input
               label="Confirm Password"
+              autoComplete="off"
               autoCorrect={false}
               secureTextEntry={true}
+              autoCapitalize="none"
               onUpdateValue={confirmPasswordHandler}
+              onPress={showPasswordHandler}
             />
           )}
 
@@ -183,7 +227,6 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    // backgroundColor: COLORS.primaryDark,
   },
   box: {
     marginVertical: 20,

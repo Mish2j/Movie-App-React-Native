@@ -3,6 +3,7 @@ import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   signOut,
+  updateProfile,
 } from "firebase/auth";
 import { authentication } from "../server/server-config";
 
@@ -14,8 +15,6 @@ import {
   MOVIE_WITH_GENRE,
   MOVIE_DETAIL_BASE,
   MOVIE_DETAIL_QUERY,
-  AUTH_SIGNIN,
-  AUTH_SIGNUP,
 } from "../constants/config";
 
 const fetchData = async (url) => {
@@ -52,11 +51,25 @@ export const getMovieDetails = async (movieId) => {
   return await fetchData(`${MOVIE_DETAIL_BASE}${movieId}${MOVIE_DETAIL_QUERY}`);
 };
 
-export const createUser = async (email, password) => {
-  const response = await createUserWithEmailAndPassword(email, password);
+export const createUser = async (email, password, fullName) => {
+  try {
+    const response = await createUserWithEmailAndPassword(
+      authentication,
+      email,
+      password
+    );
 
-  console.log(response);
-  // return token
+    const user = authentication.currentUser;
+    if (!user) return;
+
+    updateProfile(user, {
+      displayName: fullName,
+    });
+
+    return response._tokenResponse.idToken;
+  } catch (error) {
+    console.log(error);
+  }
 };
 
 export const loginUser = async (email, password) => {
@@ -67,7 +80,6 @@ export const loginUser = async (email, password) => {
       password
     );
 
-    // console.log(response);
     return response._tokenResponse.idToken;
   } catch (error) {
     console.log(error);
@@ -76,4 +88,48 @@ export const loginUser = async (email, password) => {
 
 export const signOutUser = async () => {
   const response = await signOut(authentication);
+};
+
+const getCurrentUser = () => {
+  const user = authentication.currentUser;
+  if (!user) return;
+  return user;
+};
+
+export const getUserProfile = () => {
+  const user = getCurrentUser();
+  const displayName = user?.displayName;
+  const email = user?.email;
+  const photoURL = user?.photoURL;
+  const emailVerified = user?.emailVerified;
+  const uid = user?.uid;
+  return { fullName: displayName, email, photoURL, emailVerified, uid };
+};
+
+export const updateUserName = async (updatedUserName) => {
+  const user = getCurrentUser();
+  updateProfile(user, {
+    displayName: updatedUserName,
+  });
+};
+
+export const updateUserEmail = async (updatedEmail) => {
+  const user = getCurrentUser();
+  // updateProfile(user, {
+  //   displayName: updatedEmail,
+  // });
+};
+
+export const updateUserPassword = async () => {
+  const user = getCurrentUser();
+  // updateProfile(user, {
+  //   displayName: fullName,
+  // });
+};
+
+export const updateUserAvatar = async (photoURL) => {
+  const user = getCurrentUser();
+  updateProfile(user, {
+    photoURL: photoURL,
+  });
 };

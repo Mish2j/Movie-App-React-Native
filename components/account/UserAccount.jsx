@@ -3,7 +3,7 @@ import { View, StyleSheet } from "react-native";
 
 import { COLORS } from "../../constants/styles";
 import { AuthContext } from "../../store/auth-context";
-import { signOutUser } from "../../util/http";
+import { getUserProfile, signOutUser } from "../../util/http";
 
 import BodyWrapper from "../UI/BodyWrapper";
 import IconButton from "../UI/IconButton";
@@ -12,6 +12,7 @@ import UserData from "./UserData";
 const UserAccount = () => {
   const [signingout, setSigningout] = useState(false);
   const authCtx = useContext(AuthContext);
+  const userData = getUserProfile();
 
   const signOutHandler = async () => {
     try {
@@ -28,10 +29,10 @@ const UserAccount = () => {
   return (
     <BodyWrapper color={COLORS.primaryDark}>
       <View style={styles.container}>
-        <UserData label="Email" userData="test@gmail.com" />
+        <UserData label="Email" userData={userData.email} />
         <UserData label="Password" userData="********" />
-        <UserData label="First Name" userData="John" />
-        <UserData label="Last Name" userData="Doe" />
+        <UserData label="First Name" userData={userData.fullName} />
+        {/* <UserData label="Last Name" userData="Doe" /> */}
         <IconButton
           containerStyle={styles.signOutBtn}
           iconName="log-out-outline"

@@ -12,7 +12,6 @@ const Input = ({ label, onUpdateValue, ...inputProps }) => {
         {...inputProps}
         onChangeText={onUpdateValue}
         style={styles.input}
-        autoCapitalize="none"
       />
     </View>
   );

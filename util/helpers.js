@@ -55,3 +55,7 @@ export const validateName = (name) => {
   }
   return nameError;
 };
+
+export const validateURL = (URL) => {
+  // isValid URL ...
+};

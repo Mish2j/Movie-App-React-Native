@@ -20,6 +20,7 @@ const UserData = ({ label, userData }) => {
         <Title text={label} />
         {isEditing ? (
           <TextInput
+            // onChangeText={}
             style={styles.input}
             placeholder="Type..."
             placeholderTextColor={COLORS.textDark}
