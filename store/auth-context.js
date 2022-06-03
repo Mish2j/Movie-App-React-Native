@@ -13,7 +13,7 @@ const initialState = {
 export const AuthContext = createContext(initialState);
 
 export const AuthContextProvider = ({ children }) => {
-  const [token, setToken] = useState("asd"); // CHANGE
+  const [token, setToken] = useState(null); // CHANGE
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
 
@@ -22,7 +22,7 @@ export const AuthContextProvider = ({ children }) => {
   };
 
   const createUser = (token) => {
-    // setToken(token);
+    setToken(token);
   };
 
   const logoutUser = () => {

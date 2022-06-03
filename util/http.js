@@ -1,4 +1,10 @@
 import axios from "axios";
+import {
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  signOut,
+} from "firebase/auth";
+import { authentication } from "../server/server-config";
 
 import {
   POPULAR_MOVIES,
@@ -47,24 +53,27 @@ export const getMovieDetails = async (movieId) => {
 };
 
 export const createUser = async (email, password) => {
-  const response = await axios.post(AUTH_SIGNUP, {
-    email,
-    password,
-    returnSecureToken: true,
-  });
-  const token = response.data.idToken;
-  // console.log(response.data);
-  return token;
+  const response = await createUserWithEmailAndPassword(email, password);
+
+  console.log(response);
+  // return token
 };
 
 export const loginUser = async (email, password) => {
-  const response = await axios.post(AUTH_SIGNIN, {
-    email,
-    password,
-    returnSecureToken: true,
-  });
+  try {
+    const response = await signInWithEmailAndPassword(
+      authentication,
+      email,
+      password
+    );
 
-  const token = response.data.idToken;
-  console.log(response.data);
-  return token;
+    // console.log(response);
+    return response._tokenResponse.idToken;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const signOutUser = async () => {
+  const response = await signOut(authentication);
 };

@@ -1,9 +1,10 @@
 export const API_KEY = "adaa08537ddd69ed26db726612aff9f5";
+
 const BASE_URL = "https://api.themoviedb.org/3/";
 const BASE_QUERY = "&language=en-US&page=1";
 const VIDEO_QUERY = `&append_to_response=videos`;
-export const IMAGE_URL = `https://image.tmdb.org/t/p/original`;
 
+export const IMAGE_URL = `https://image.tmdb.org/t/p/original`;
 export const POPULAR_MOVIES = `${BASE_URL}movie/popular?api_key=${API_KEY}${BASE_QUERY}`;
 export const TOP_RATED_MOVIES = `${BASE_URL}movie/top_rated?api_key=${API_KEY}${BASE_QUERY}`;
 export const UPCOMING_MOVIES = `${BASE_URL}movie/upcoming?api_key=${API_KEY}${BASE_QUERY}`;
@@ -18,11 +19,6 @@ export const MOVIE_VIDEO = `https://www.youtube.com/watch?v=`;
 
 // get movie images
 // https://api.themoviedb.org/3/movie/{movie_id}/images?api_key=<<api_key>>&language=en-US
-
-const AUTH_KEY = "AIzaSyCP4hPvdzEt2XRQ43tu5skMc2t2kdCIHFE";
-const AUTH_URL_BASE = `https://identitytoolkit.googleapis.com/v1/accounts:`;
-export const AUTH_SIGNUP = `${AUTH_URL_BASE}signUp?key=${AUTH_KEY}`;
-export const AUTH_SIGNIN = `${AUTH_URL_BASE}signInWithPassword?key=${AUTH_KEY}`;
 
 export const MOVIE_GENRES = [
   { id: 1, name: "All" },

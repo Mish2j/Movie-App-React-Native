@@ -1,18 +1,28 @@
-import { useContext } from "react";
+import { useState, useContext } from "react";
 import { View, StyleSheet } from "react-native";
 
 import { COLORS } from "../../constants/styles";
 import { AuthContext } from "../../store/auth-context";
+import { signOutUser } from "../../util/http";
 
 import BodyWrapper from "../UI/BodyWrapper";
 import IconButton from "../UI/IconButton";
 import UserData from "./UserData";
 
 const UserAccount = () => {
+  const [signingout, setSigningout] = useState(false);
   const authCtx = useContext(AuthContext);
 
-  const signOutHandler = () => {
-    authCtx.logoutUser();
+  const signOutHandler = async () => {
+    try {
+      setSigningout(true);
+      signOutUser();
+      authCtx.logoutUser();
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setSigningout(false);
+    }
   };
 
   return (
@@ -27,7 +37,7 @@ const UserAccount = () => {
           iconName="log-out-outline"
           iconSize={20}
           iconColor={COLORS.textDark}
-          text="Sign Out"
+          text={signingout ? "Wait..." : "Sign Out"}
           onPress={signOutHandler}
         />
       </View>

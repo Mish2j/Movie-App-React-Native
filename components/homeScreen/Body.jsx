@@ -36,9 +36,13 @@ const Body = () => {
     const getData = async () => {
       setIsloading(true);
       try {
-        const popularMovies = await getPopularMovies();
-        const topRatedMovies = await getTopRatedMovies();
-        const upcomingMovies = await getUpcomingMovies();
+        const [popularMovies, topRatedMovies, upcomingMovies] =
+          await Promise.all([
+            getPopularMovies(),
+            getTopRatedMovies(),
+            getUpcomingMovies(),
+          ]);
+
         setMovies({
           popularMovies,
           topRatedMovies,
