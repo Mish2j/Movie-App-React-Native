@@ -9,7 +9,7 @@ const Avatar = () => {
   return (
     <View style={styles.profileInfoContainer}>
       <Image
-        source={require("../../assets/icon.png")}
+        source={require("../../assets/default-avatar.jpg")}
         style={styles.profileImage}
       />
       <Text style={styles.userName}>{userData?.fullName}</Text>

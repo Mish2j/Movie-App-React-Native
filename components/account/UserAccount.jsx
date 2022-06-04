@@ -1,9 +1,9 @@
 import { useState, useContext } from "react";
-import { View, StyleSheet } from "react-native";
+import { Alert, View, StyleSheet, Pressable, Text } from "react-native";
 
 import { COLORS } from "../../constants/styles";
 import { AuthContext } from "../../store/auth-context";
-import { getUserProfile, signOutUser } from "../../util/http";
+import { getUserProfile, signOutUser, updateUserName } from "../../util/http";
 
 import BodyWrapper from "../UI/BodyWrapper";
 import IconButton from "../UI/IconButton";
@@ -13,6 +13,7 @@ const UserAccount = () => {
   const [signingout, setSigningout] = useState(false);
   const authCtx = useContext(AuthContext);
   const userData = getUserProfile();
+  const [newUserName, setNewUserName] = useState("");
 
   const signOutHandler = async () => {
     try {
@@ -26,13 +27,37 @@ const UserAccount = () => {
     }
   };
 
+  const deleteAccountHandler = () => {
+    Alert.alert(
+      "Attention",
+      "Are you sure you want to permanently delete your accout?"
+    );
+  };
+
+  const updateUserNameHandler = (updatedUserName) => {
+    setNewUserName(updatedUserName);
+  };
+
+  const saveChangesHandler = () => {
+    // validate new data
+    if (newUserName.trim().length < 4) {
+      console.log("Error");
+      return;
+    }
+    updateUserName(newUserName);
+  };
+
   return (
     <BodyWrapper color={COLORS.primaryDark}>
       <View style={styles.container}>
         <UserData label="Email" userData={userData.email} />
         <UserData label="Password" userData="********" />
-        <UserData label="First Name" userData={userData.fullName} />
-        {/* <UserData label="Last Name" userData="Doe" /> */}
+        <UserData
+          onDataUpdate={updateUserNameHandler}
+          onSave={saveChangesHandler}
+          label="Username"
+          userData={userData.username}
+        />
         <IconButton
           containerStyle={styles.signOutBtn}
           iconName="log-out-outline"
@@ -41,6 +66,15 @@ const UserAccount = () => {
           text={signingout ? "Wait..." : "Sign Out"}
           onPress={signOutHandler}
         />
+        <Pressable
+          onPress={deleteAccountHandler}
+          style={({ pressed }) => [
+            styles.deleteBtn,
+            pressed && styles.deleteBtnPressed,
+          ]}
+        >
+          <Text style={styles.deleteBtnText}>Delete my account</Text>
+        </Pressable>
       </View>
     </BodyWrapper>
   );
@@ -56,5 +90,16 @@ const styles = StyleSheet.create({
   signOutBtn: {
     marginTop: 50,
     alignSelf: "center",
+  },
+  deleteBtn: {
+    marginTop: 70,
+    alignSelf: "center",
+  },
+  deleteBtnPressed: {
+    opacity: 0.7,
+  },
+  deleteBtnText: {
+    fontSize: 14,
+    color: "red",
   },
 });

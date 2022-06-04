@@ -4,6 +4,7 @@ import {
   signInWithEmailAndPassword,
   signOut,
   updateProfile,
+  deleteUser,
 } from "firebase/auth";
 import { authentication } from "../server/server-config";
 
@@ -68,7 +69,18 @@ export const createUser = async (email, password, fullName) => {
 
     return response._tokenResponse.idToken;
   } catch (error) {
-    console.log(error);
+    console.log(error.code);
+
+    // switch (error.code) {
+    //   case "auth/email-already-in-use":
+    //   case "auth/invalid-email":
+    //     setEmailError(err.message);
+    //     break;
+    //   case "auth/weak-password":
+    //     setPasswordError(err.message);
+    //     break;
+    //   default:
+    // }
   }
 };
 
@@ -82,7 +94,18 @@ export const loginUser = async (email, password) => {
 
     return response._tokenResponse.idToken;
   } catch (error) {
-    console.log(error);
+    console.log(error.code);
+
+    // switch (error.code) {
+    //   case "auth/Invalid-email":
+    //   case "auth/user-disabled":
+    //   case "auth/user-not-found":
+    //     setEmailError(err.message);
+    //     break;
+    //   case "auth/wrong-password":
+    //     setPasswordError(err.message);
+    //     break;
+    //   default:
   }
 };
 
@@ -103,7 +126,7 @@ export const getUserProfile = () => {
   const photoURL = user?.photoURL;
   const emailVerified = user?.emailVerified;
   const uid = user?.uid;
-  return { fullName: displayName, email, photoURL, emailVerified, uid };
+  return { username: displayName, email, photoURL, emailVerified, uid };
 };
 
 export const updateUserName = async (updatedUserName) => {
@@ -132,4 +155,9 @@ export const updateUserAvatar = async (photoURL) => {
   updateProfile(user, {
     photoURL: photoURL,
   });
+};
+
+export const deleteUserAccount = async () => {
+  const user = getCurrentUser();
+  deleteUser(user);
 };

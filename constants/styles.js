@@ -4,4 +4,7 @@ export const COLORS = {
 
   textLight: "#fafafa",
   textDark: "#909090",
+
+  dangerLightdanger: "#ff0000",
+  dangerLight: "#ff5252",
 };

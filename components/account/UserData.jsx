@@ -6,8 +6,9 @@ import { COLORS } from "../../constants/styles";
 import IconButton from "../UI/IconButton";
 import Title from "../UI/Title";
 import Input from "../UI/Input";
+import Pressable from "react-native/Libraries/Components/Pressable/Pressable";
 
-const UserData = ({ label, userData }) => {
+const UserData = ({ label, userData, onDataUpdate, onSave }) => {
   const [isEditing, setIsEditing] = useState(false);
 
   const editDataHandler = () => {
@@ -19,12 +20,27 @@ const UserData = ({ label, userData }) => {
       <View>
         <Title text={label} />
         {isEditing ? (
-          <TextInput
-            // onChangeText={}
-            style={styles.input}
-            placeholder="Type..."
-            placeholderTextColor={COLORS.textDark}
-          />
+          <>
+            <TextInput
+              onChangeText={onDataUpdate}
+              style={styles.input}
+              placeholder="Type..."
+              placeholderTextColor={COLORS.textDark}
+              autoComplete="off"
+              autoCapitalize="none"
+              autoCorrect={false}
+              autoFocus={true}
+            />
+            <Pressable
+              onPress={onSave}
+              style={({ pressed }) => [
+                styles.saveBtn,
+                pressed && styles.saveBtnPressed,
+              ]}
+            >
+              <Text style={styles.saveBtnText}>Save changes</Text>
+            </Pressable>
+          </>
         ) : (
           <Text style={styles.userData}>{userData}</Text>
         )}
@@ -67,5 +83,16 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.textLight,
     borderRadius: 5,
     padding: 7,
+  },
+  saveBtn: {
+    marginTop: 5,
+    alignSelf: "flex-start",
+  },
+  saveBtnPressed: {
+    opacity: 0.7,
+  },
+  saveBtnText: {
+    fontSize: 14,
+    color: "lightblue",
   },
 });

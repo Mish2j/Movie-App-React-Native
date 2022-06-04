@@ -22,8 +22,7 @@ export const validateEmail = (email) => {
     return emailError;
   }
   if (!isValidEmail(email)) {
-    emailError =
-      "Please enter a valid email address in this format - example@email.com";
+    emailError = "Email address must be in this format - example@email.com!";
     return emailError;
   }
 
@@ -37,7 +36,7 @@ export const validatePassword = (password) => {
     return passwordError;
   }
   if (password.trim().length < 6) {
-    passwordError = "Password must be at least 6 characters long.";
+    passwordError = "Password must be at least 6 characters long!";
     return passwordError;
   }
   return passwordError;
@@ -46,14 +45,25 @@ export const validatePassword = (password) => {
 export const validateName = (name) => {
   let nameError = "";
   if (!isNotEmpty(name)) {
-    nameError = "This field cannot be empty!";
+    nameError = "Plesae enter your name!";
     return nameError;
   }
   if (!isValidName(name)) {
-    nameError = "Please enter a valid name!";
+    nameError = "Username must contain only alphabetical (a-z) characters!";
     return nameError;
   }
   return nameError;
+};
+
+export const validateConfirmPassword = (password, confirmPassword) => {
+  let error = "";
+
+  if (password !== confirmPassword) {
+    error = "Your password and confirmation password do not match!";
+    return error;
+  }
+
+  return error;
 };
 
 export const validateURL = (URL) => {
