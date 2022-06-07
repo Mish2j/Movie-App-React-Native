@@ -11,11 +11,13 @@ import {
   validatePassword,
 } from "../../util/helpers";
 import { AuthContext } from "../../store/auth-context";
+import { useNavigation } from "@react-navigation/native";
 
 import Input from "../UI/Input";
 import IconButton from "../UI/IconButton";
 
 const SignupForm = ({ onError }) => {
+  const navigation = useNavigation();
   const [userCred, setUserCred] = useState({
     email: "",
     password: "",
@@ -85,11 +87,11 @@ const SignupForm = ({ onError }) => {
   const formSubmitHandler = async () => {
     setIsAuthenticating(true);
 
-    let isValid = validateForm();
-
-    if (!isValid) return;
-
     try {
+      let isValid = validateForm();
+
+      if (!isValid) return;
+
       const token = await createUser(
         userCred.email,
         userCred.password,
@@ -97,6 +99,7 @@ const SignupForm = ({ onError }) => {
       );
 
       authCtx.loginUser(token);
+      navigation.navigate("Account");
     } catch (error) {
       setIsAuthenticating(false);
       handleSignupError(error.message);

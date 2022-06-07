@@ -1,21 +1,83 @@
-import { useState, useContext } from "react";
+import { useReducer, useState, useContext } from "react";
 import { Alert, View, StyleSheet, Pressable, Text } from "react-native";
 
+import * as reducer from "../../reducers/index";
 import { COLORS } from "../../constants/styles";
 import { AuthContext } from "../../store/auth-context";
-import { getUserProfile, signOutUser, updateUserName } from "../../util/http";
+import {
+  getUserProfile,
+  signOutUser,
+  updateUserEmail,
+  updateUserName,
+  updateUserPassword,
+} from "../../util/http";
+import {
+  validateEmail,
+  validateName,
+  validatePassword,
+} from "../../util/helpers";
 
 import BodyWrapper from "../UI/BodyWrapper";
 import IconButton from "../UI/IconButton";
 import UserData from "./UserData";
+import Avatar from "./Avatar";
 
 const UserAccount = () => {
   const [signingout, setSigningout] = useState(false);
   const authCtx = useContext(AuthContext);
   const userData = getUserProfile();
-  const [newUserName, setNewUserName] = useState("");
-  const [newPassword, setNewPassword] = useState("");
-  const [newEmail, setNewEmail] = useState("");
+
+  const initialState = {
+    username: "",
+    email: "",
+    imgURL: "",
+    password: "",
+  };
+
+  const [accountDetails, dispatch] = useReducer(
+    reducer.accountUpdateReducer,
+    initialState
+  );
+
+  const updateUsername = (newUsername) => {
+    dispatch(reducer.setNewUsername(newUsername));
+  };
+
+  const updateEmail = (newEmail) => {
+    dispatch(reducer.setNewEmail(newEmail));
+  };
+
+  const updatePassword = (newPass) => {
+    dispatch(reducer.setNewPassword(newPass));
+  };
+
+  const saveNewEmail = () => {
+    const emailErr = validateEmail(accountDetails.email);
+    if (emailErr) {
+      console.log(emailErr);
+      return;
+    }
+
+    updateUserEmail(accountDetails.email);
+  };
+
+  const saveNewUsername = () => {
+    const nameErr = validateName(accountDetails.username);
+    if (nameErr) {
+      console.log(nameErr);
+      return;
+    }
+    updateUserName(accountDetails.username);
+  };
+
+  const saveNewPassword = () => {
+    const passErr = validatePassword(accountDetails.password);
+    if (passErr) {
+      console.log(passErr);
+      return;
+    }
+    updateUserPassword(accountDetails.password);
+  };
 
   const signOutHandler = async () => {
     try {
@@ -23,8 +85,6 @@ const UserAccount = () => {
       signOutUser();
       authCtx.logoutUser();
     } catch (error) {
-      console.log(error);
-    } finally {
       setSigningout(false);
     }
   };
@@ -36,41 +96,25 @@ const UserAccount = () => {
     );
   };
 
-  const updateUserNameHandler = (updatedUserName) => {
-    setNewUserName(updatedUserName);
-  };
-
-  const updatePasswordHandler = () => {};
-
-  const updateEmailHandler = () => {};
-
-  const saveChangesHandler = () => {
-    // validate new data
-    if (newUserName.trim().length < 4) {
-      console.log("Error");
-      return;
-    }
-    updateUserName(newUserName);
-  };
-
   return (
     <BodyWrapper color={COLORS.primaryDark}>
       <View style={styles.container}>
+        <Avatar imgUrl={userData.photoURL} />
         <UserData
-          onDataUpdate={updateEmailHandler}
-          onSave={saveChangesHandler}
+          onDataUpdate={updateEmail}
+          onSave={saveNewEmail}
           label="Email"
           userData={userData.email}
         />
         <UserData
-          onDataUpdate={updatePasswordHandler}
-          onSave={saveChangesHandler}
+          onDataUpdate={updatePassword}
+          onSave={saveNewPassword}
           label="Password"
           userData="********"
         />
         <UserData
-          onDataUpdate={updateUserNameHandler}
-          onSave={saveChangesHandler}
+          onDataUpdate={updateUsername}
+          onSave={saveNewUsername}
           label="Username"
           userData={userData.username}
         />

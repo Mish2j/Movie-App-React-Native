@@ -5,6 +5,10 @@ import {
   signOut,
   updateProfile,
   deleteUser,
+  updateEmail,
+  updatePassword,
+  reauthenticateWithCredential,
+  EmailAuthProvider,
 } from "firebase/auth";
 import { authentication } from "../server/server-config";
 
@@ -107,35 +111,90 @@ export const getUserProfile = () => {
   return { username: displayName, email, photoURL, emailVerified, uid };
 };
 
-export const updateUserName = async (updatedUserName) => {
+export const updateUserName = async (newUsername) => {
   const user = getCurrentUser();
   updateProfile(user, {
-    displayName: updatedUserName,
+    displayName: newUsername,
   });
 };
 
-export const updateUserEmail = async (updatedEmail) => {
+export const updateUserEmail = (newEmail) => {
+  // try {
+  //   const user = getCurrentUser();
+  //   const resp = await reAuth();
+
+  //   const emailUpadteResponse = await updateEmail(user, newEmail);
+  // } catch (error) {
+  //   throw new Error(error);
+  // }
+
   const user = getCurrentUser();
-  // updateProfile(user, {
-  //   displayName: updatedEmail,
-  // });
+  const credential = EmailAuthProvider.credential(user.email, "password");
+
+  reauthenticateWithCredential(user, credential)
+    .then(() => {
+      // User re-authenticated.
+
+      updateEmail(user, newEmail)
+        .then(() => {
+          // Email updated!
+          // ...
+          console.log("email updated!");
+        })
+        .catch((error) => {
+          // An error occurred
+          // ...
+          console.log(error);
+        });
+    })
+    .catch((error) => {
+      // An error ocurred
+      // ...
+      console.log(error);
+    });
 };
 
-export const updateUserPassword = async () => {
+export const updateUserPassword = async (newPassword) => {
   const user = getCurrentUser();
-  // updateProfile(user, {
-  //   displayName: fullName,
-  // });
+  const credential = EmailAuthProvider.credential(user.email, "password");
+
+  reauthenticateWithCredential(user, credential)
+    .then(() => {
+      // User re-authenticated.
+
+      updatePassword(user, newPassword)
+        .then(() => {
+          // Update successful.
+          console.log("password updated!");
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    })
+    .catch((error) => {
+      // An error ocurred
+      // ...
+      console.log(error);
+    });
 };
 
-export const updateUserAvatar = async (photoURL) => {
+export const updateUserAvatar = async (newPhotoURL) => {
   const user = getCurrentUser();
+  // update image ...
   updateProfile(user, {
-    photoURL: photoURL,
+    photoURL: newPhotoURL,
   });
 };
 
-// export const deleteUserAccount = async () => {
-//   const user = getCurrentUser();
-//   deleteUser(user);
-// };
+export const deleteUserAccount = async () => {
+  const user = getCurrentUser();
+
+  deleteUser(user)
+    .then(() => {
+      // User deleted.
+    })
+    .catch((error) => {
+      // An error ocurred
+      // ...
+    });
+};

@@ -46,7 +46,7 @@ const VideoPlayer = ({ isPlaying, onPlay }) => {
       {isLoading && <Loader />}
       {!isLoading && (
         <YoutubePlayer
-          onChangeState={onStateChange}
+          // onChangeState={onStateChange}
           ref={videoRef}
           height={"100%"}
           width={"100%"}

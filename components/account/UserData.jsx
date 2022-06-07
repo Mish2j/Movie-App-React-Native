@@ -1,11 +1,11 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { View, Text, StyleSheet, TextInput } from "react-native";
 
 import { COLORS } from "../../constants/styles";
 
 import IconButton from "../UI/IconButton";
 import Title from "../UI/Title";
-import Input from "../UI/Input";
+
 import Pressable from "react-native/Libraries/Components/Pressable/Pressable";
 
 const UserData = ({ label, userData, onDataUpdate, onSave }) => {
@@ -13,6 +13,11 @@ const UserData = ({ label, userData, onDataUpdate, onSave }) => {
 
   const editDataHandler = () => {
     setIsEditing((currentState) => !currentState);
+  };
+
+  const saveHandler = () => {
+    onSave();
+    setIsEditing(false);
   };
 
   return (
@@ -32,7 +37,7 @@ const UserData = ({ label, userData, onDataUpdate, onSave }) => {
               autoFocus={true}
             />
             <Pressable
-              onPress={onSave}
+              onPress={saveHandler}
               style={({ pressed }) => [
                 styles.saveBtn,
                 pressed && styles.saveBtnPressed,

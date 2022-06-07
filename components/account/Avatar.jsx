@@ -3,13 +3,15 @@ import { View, Text, Image, StyleSheet } from "react-native";
 import { COLORS } from "../../constants/styles";
 import { getUserProfile } from "../../util/http";
 
-const Avatar = () => {
+const Avatar = ({ imgUrl }) => {
   const userData = getUserProfile();
 
   return (
     <View style={styles.profileInfoContainer}>
       <Image
-        source={require("../../assets/default-avatar.jpg")}
+        source={
+          imgUrl ? { uri: imgUrl } : require("../../assets/default-avatar.jpg")
+        }
         style={styles.profileImage}
       />
       <Text style={styles.userName}>{userData?.fullName}</Text>

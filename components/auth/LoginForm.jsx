@@ -1,6 +1,7 @@
 import { useState, useContext } from "react";
 import { StyleSheet } from "react-native";
 
+import { useNavigation } from "@react-navigation/native";
 import { ERROR } from "../../constants/config";
 import { COLORS } from "../../constants/styles";
 import { loginUser } from "../../util/http";
@@ -11,6 +12,7 @@ import Input from "../UI/Input";
 import IconButton from "../UI/IconButton";
 
 const LoginForm = ({ onError }) => {
+  const navigation = useNavigation();
   const [userCred, setUserCred] = useState({
     email: "",
     password: "",
@@ -29,6 +31,7 @@ const LoginForm = ({ onError }) => {
     switch (error) {
       case "auth/user-disabled":
         onError({ submitFailErrMsg: ERROR.DISABLED_ACCOUNT });
+        break;
       case "auth/user-not-found":
         onError({ submitFailErrMsg: ERROR.NO_USER });
         break;
@@ -68,13 +71,15 @@ const LoginForm = ({ onError }) => {
 
   const formSubmitHandler = async () => {
     setIsAuthenticating(true);
-    let isValid = validateForm();
-
-    if (!isValid) return;
 
     try {
+      let isValid = validateForm();
+
+      if (!isValid) return;
+
       const token = await loginUser(userCred.email, userCred.password);
       authCtx.loginUser(token);
+      navigation.navigate("Account");
     } catch (error) {
       setIsAuthenticating(false);
       handleLoginError(error.message);

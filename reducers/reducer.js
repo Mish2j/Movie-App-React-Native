@@ -11,3 +11,18 @@ export const myMovieListReducer = (state, action) => {
       return state;
   }
 };
+
+export const accountUpdateReducer = (state, action) => {
+  switch (action.type) {
+    case ACTIONS.UPDATE_USERNAME:
+      return { ...state, username: action.payload };
+    case ACTIONS.UPDATE_EMAIL:
+      return { ...state, email: action.payload };
+    case ACTIONS.UPDATE_PASSWORD:
+      return { ...state, password: action.payload };
+    case ACTIONS.UPDATE_AVATAR:
+      return { ...state, imgURL: action.avatar };
+    default:
+      return state;
+  }
+};

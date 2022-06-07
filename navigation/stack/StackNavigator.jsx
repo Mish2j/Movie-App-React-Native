@@ -15,6 +15,7 @@ const Stack = createNativeStackNavigator();
 
 const StackNavigator = () => {
   const authCtx = useContext(AuthContext);
+  const { isLoggedin } = authCtx;
 
   const screenOptions = {
     headerStyle: {
@@ -25,28 +26,23 @@ const StackNavigator = () => {
 
   return (
     <Stack.Navigator screenOptions={screenOptions}>
-      {!authCtx.isLoggedin && (
-        <Stack.Screen name="Auth" component={AuthScreen} />
-      )}
-      {authCtx.isLoggedin && (
-        <>
-          <Stack.Screen
-            name="Tab"
-            component={TabNavigator}
-            options={{ headerShown: false }}
-          />
-          <Stack.Screen
-            name="MyMovies"
-            component={MyMoviesScreen}
-            options={{
-              title: "My List",
-            }}
-          />
-          <Stack.Screen name="Profile" component={ProfileScreen} />
-          <Stack.Screen name="Movie" component={MovieScreen} />
-          <Stack.Screen name="Account" component={AccountScreen} />
-        </>
-      )}
+      <Stack.Screen
+        name="Tab"
+        component={TabNavigator}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="MyMovies"
+        component={MyMoviesScreen}
+        options={{
+          title: "My List",
+        }}
+      />
+      <Stack.Screen name="Profile" component={ProfileScreen} />
+      <Stack.Screen name="Movie" component={MovieScreen} />
+
+      {isLoggedin && <Stack.Screen name="Account" component={AccountScreen} />}
+      {!isLoggedin && <Stack.Screen name="Auth" component={AuthScreen} />}
     </Stack.Navigator>
   );
 };

@@ -1,27 +1,34 @@
-import { View, StyleSheet, Text, Image } from "react-native";
+import { useContext } from "react";
+import { View, StyleSheet } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 
+import { AuthContext } from "../../store/auth-context";
 import { COLORS } from "../../constants/styles";
 
 import BodyWrapper from "../UI/BodyWrapper";
 import IconButton from "../UI/IconButton";
-import Avatar from "./Avatar";
 
 const Profile = () => {
   const navigation = useNavigation();
+
+  const authCtx = useContext(AuthContext);
+  const { isLoggedin } = authCtx;
 
   const navigateMyMoviesScreen = () => {
     navigation.navigate("MyMovies");
   };
 
   const navigateAccountScreen = () => {
-    navigation.navigate("Account");
+    if (isLoggedin) {
+      navigation.navigate("Account");
+      return;
+    }
+    navigation.navigate("Auth");
   };
 
   return (
     <BodyWrapper color={COLORS.primaryDark}>
       <View style={styles.container}>
-        <Avatar />
         <View>
           <IconButton
             containerStyle={styles.textContainer}
