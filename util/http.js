@@ -69,18 +69,7 @@ export const createUser = async (email, password, fullName) => {
 
     return response._tokenResponse.idToken;
   } catch (error) {
-    console.log(error.code);
-
-    // switch (error.code) {
-    //   case "auth/email-already-in-use":
-    //   case "auth/invalid-email":
-    //     setEmailError(err.message);
-    //     break;
-    //   case "auth/weak-password":
-    //     setPasswordError(err.message);
-    //     break;
-    //   default:
-    // }
+    throw new Error(error.code);
   }
 };
 
@@ -94,18 +83,7 @@ export const loginUser = async (email, password) => {
 
     return response._tokenResponse.idToken;
   } catch (error) {
-    console.log(error.code);
-
-    // switch (error.code) {
-    //   case "auth/Invalid-email":
-    //   case "auth/user-disabled":
-    //   case "auth/user-not-found":
-    //     setEmailError(err.message);
-    //     break;
-    //   case "auth/wrong-password":
-    //     setPasswordError(err.message);
-    //     break;
-    //   default:
+    throw new Error(error.code);
   }
 };
 
@@ -157,7 +135,7 @@ export const updateUserAvatar = async (photoURL) => {
   });
 };
 
-export const deleteUserAccount = async () => {
-  const user = getCurrentUser();
-  deleteUser(user);
-};
+// export const deleteUserAccount = async () => {
+//   const user = getCurrentUser();
+//   deleteUser(user);
+// };

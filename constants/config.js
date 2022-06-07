@@ -14,12 +14,6 @@ export const MOVIE_DETAIL_QUERY = `?api_key=${API_KEY}${VIDEO_QUERY}`;
 export const MOVIE_WITH_GENRE = `${BASE_URL}discover/movie?api_key=${API_KEY}&language=en-US&with_genres=`;
 export const MOVIE_VIDEO = `https://www.youtube.com/watch?v=`;
 
-// get similar movies
-// https://api.themoviedb.org/3/movie/{movie_id}/similar?api_key=<<api_key>>&language=en-US&page=1
-
-// get movie images
-// https://api.themoviedb.org/3/movie/{movie_id}/images?api_key=<<api_key>>&language=en-US
-
 export const MOVIE_GENRES = [
   { id: 1, name: "All" },
   { id: 28, name: "Action" },
@@ -45,4 +39,12 @@ export const MOVIE_GENRES = [
 
 export const ERROR = {
   REQUEST_FAILED: "Request Error!",
+  EMAIL_EXISTS: "This email already in use!",
+  SIGNUP_FAIL: "Failed to create user! Please try again later.",
+  LOGIN_FAIL: "Failed to login! Please try again later.",
+  WRONG_PASSWORD: "Invalid Credentials!",
+  MANY_REQUESTS:
+    "Sorry, your account has been disabled due to too many requests! Please try again later.",
+  DISABLED_ACCOUNT: "Sorry, your account has been disabled!",
+  NO_USER: `There's no account associated with this email`,
 };

@@ -1,157 +1,58 @@
-import { useState, useContext } from "react";
-import {
-  Text,
-  View,
-  StyleSheet,
-  Pressable,
-  Alert,
-  ScrollView,
-} from "react-native";
+import { useState } from "react";
+import { Text, View, StyleSheet, Pressable, ScrollView } from "react-native";
 
 import { COLORS } from "../../constants/styles";
-import { createUser, loginUser } from "../../util/http";
-import {
-  validateConfirmPassword,
-  validateEmail,
-  validateName,
-  validatePassword,
-} from "../../util/helpers";
-import { AuthContext } from "../../store/auth-context";
 
-import Input from "../UI/Input";
-import IconButton from "../UI/IconButton";
 import BodyWrapper from "../UI/BodyWrapper";
 import ErrorContainer from "./ErrorContainer";
+import LoginForm from "./LoginForm";
+import SignupForm from "./SignupForm";
 
 const AuthForm = () => {
   const [isLogin, setIsLogin] = useState(true);
   const [formHasError, setFormHasError] = useState(null);
+
   const [errors, setErrors] = useState({
     emailError: "",
     passwordError: "",
     usernameError: "",
     passwordRepeatError: "",
+    submitFailError: "",
   });
-  const [userCred, setUserCred] = useState({
-    email: "",
-    password: "",
-    username: "",
-  });
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [isPasswordHidden, setIsPasswordHidden] = useState(true);
-  const [isAuthenticating, setIsAuthenticating] = useState(false);
-
-  const authCtx = useContext(AuthContext);
-
-  const switchFormHandler = () => {
-    clearErrors();
-    setIsLogin((curState) => !curState);
-  };
-
-  const showPasswordHandler = () => {
-    setIsPasswordHidden((currentState) => !currentState);
-  };
-
-  const signupHandler = async (email, password, username) => {
-    try {
-      return createUser(email, password, username);
-    } catch (error) {
-      throw new Error(error);
-    }
-  };
-
-  const loginHandler = async (email, password) => {
-    try {
-      return loginUser(email, password);
-    } catch (error) {
-      throw new Error(error);
-    }
-  };
-
-  const emailHandler = (userEmail) => {
-    setUserCred((curState) => ({ ...curState, email: userEmail }));
-  };
-
-  const passwordHandler = (userPassword) => {
-    setUserCred((curState) => ({ ...curState, password: userPassword }));
-  };
-
-  const confirmPasswordHandler = (userPasswordRepeat) => {
-    setConfirmPassword(userPasswordRepeat);
-  };
-
-  const usernameHandler = (username) => {
-    setUserCred((curState) => ({ ...curState, username }));
-  };
 
   const clearErrors = () => {
     setErrors({
-      ...errors,
       emailError: "",
       passwordError: "",
       usernameError: "",
       passwordRepeatError: "",
+      submitFailError: "",
     });
     setFormHasError(false);
   };
 
-  const validateForm = () => {
-    const passErrMsg = validatePassword(userCred.password);
-    const emailErrMsg = validateEmail(userCred.email);
-    const usernameErrMsg = isLogin ? "" : validateName(userCred.username);
-    const repeatPassErrorMsg = isLogin
-      ? ""
-      : validateConfirmPassword(userCred.password, confirmPassword);
+  const handleErrors = (errorData) => {
+    setFormHasError(true);
+    const {
+      emailErrMsg,
+      passErrMsg,
+      usernameErrMsg,
+      repeatPassErrorMsg,
+      submitFailErrMsg,
+    } = errorData;
 
-    const hasErrorMsg =
-      passErrMsg || emailErrMsg || usernameErrMsg || repeatPassErrorMsg;
-
-    if (hasErrorMsg) {
-      setErrors({
-        ...errors,
-        emailError: emailErrMsg,
-        passwordError: passErrMsg,
-        usernameError: usernameErrMsg,
-        passwordRepeatError: repeatPassErrorMsg,
-      });
-      setFormHasError(true);
-      return false;
-    }
-
-    clearErrors();
-    return true;
+    setErrors({
+      emailError: emailErrMsg || "",
+      passwordError: passErrMsg || "",
+      usernameError: usernameErrMsg || "",
+      passwordRepeatError: repeatPassErrorMsg || "",
+      submitFailError: submitFailErrMsg || "",
+    });
   };
 
-  const formSubmitHandler = async () => {
-    let isValid = validateForm();
-
-    if (!isValid) return;
-
-    try {
-      setIsAuthenticating(true);
-
-      let token = null;
-
-      if (isLogin) {
-        token = await loginHandler(userCred.email, userCred.password);
-      } else if (!isLogin) {
-        token = await signupHandler(
-          userCred.email,
-          userCred.password,
-          userCred.username
-        );
-      }
-
-      token && authCtx.loginUser(token);
-    } catch (error) {
-      // FIXME loader
-      setIsAuthenticating(false);
-      const errorCode = error.code;
-      const errorMessage = error.message;
-      console.log(errorCode);
-      console.log(errorMessage);
-      Alert.alert("Login Failed!", error);
-    }
+  const switchFormHandler = () => {
+    clearErrors();
+    setIsLogin((curState) => !curState);
   };
 
   return (
@@ -160,59 +61,8 @@ const AuthForm = () => {
         <View style={styles.container}>
           {formHasError && <ErrorContainer errors={errors} />}
           <View style={styles.box}>
-            {!isLogin && (
-              <>
-                <Input
-                  label="Username"
-                  autoFocus={!isLogin}
-                  autoComplete="off"
-                  autoCapitalize="none"
-                  autoCorrect={false}
-                  onUpdateValue={usernameHandler}
-                />
-              </>
-            )}
-            <Input
-              autoFocus={isLogin}
-              label="Email"
-              autoComplete="off"
-              onUpdateValue={emailHandler}
-              autoCapitalize="none"
-              autoCorrect={false}
-            />
-
-            <Input
-              label="Password"
-              autoComplete="off"
-              onUpdateValue={passwordHandler}
-              autoCorrect={false}
-              autoCapitalize="none"
-              clearTextOnFocus={false}
-              secureTextEntry={isPasswordHidden}
-              icon="eye-outline"
-              onIconPress={showPasswordHandler}
-            />
-
-            {!isLogin && (
-              <Input
-                label="Confirm Password"
-                autoComplete="off"
-                autoCorrect={false}
-                secureTextEntry={isPasswordHidden}
-                autoCapitalize="none"
-                onUpdateValue={confirmPasswordHandler}
-              />
-            )}
-
-            <IconButton
-              onPress={formSubmitHandler}
-              iconName={`${isLogin ? "log-in" : "person-add"}-outline`}
-              iconColor={COLORS.primaryDark}
-              iconSize={22}
-              text={isAuthenticating ? "Wait..." : isLogin ? "Login" : "Signup"}
-              containerStyle={styles.formBtn}
-              textStyle={styles.formBtnText}
-            />
+            {isLogin && <LoginForm onError={handleErrors} />}
+            {!isLogin && <SignupForm onError={handleErrors} />}
             <Pressable
               onPress={switchFormHandler}
               style={({ pressed }) => [
@@ -250,18 +100,6 @@ const styles = StyleSheet.create({
     paddingVertical: 20,
     borderRadius: 7,
     backgroundColor: COLORS.primaryLight,
-  },
-  formBtn: {
-    backgroundColor: COLORS.textLight,
-    borderRadius: 5,
-    paddingVertical: 7,
-    paddingHorizontal: 14,
-    alignSelf: "center",
-    marginTop: 10,
-  },
-  formBtnText: {
-    color: COLORS.primaryDark,
-    fontSize: 16,
   },
   newUserBtnContainer: {
     marginTop: 20,

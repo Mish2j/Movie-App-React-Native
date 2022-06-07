@@ -14,6 +14,8 @@ const UserAccount = () => {
   const authCtx = useContext(AuthContext);
   const userData = getUserProfile();
   const [newUserName, setNewUserName] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [newEmail, setNewEmail] = useState("");
 
   const signOutHandler = async () => {
     try {
@@ -38,6 +40,10 @@ const UserAccount = () => {
     setNewUserName(updatedUserName);
   };
 
+  const updatePasswordHandler = () => {};
+
+  const updateEmailHandler = () => {};
+
   const saveChangesHandler = () => {
     // validate new data
     if (newUserName.trim().length < 4) {
@@ -50,8 +56,18 @@ const UserAccount = () => {
   return (
     <BodyWrapper color={COLORS.primaryDark}>
       <View style={styles.container}>
-        <UserData label="Email" userData={userData.email} />
-        <UserData label="Password" userData="********" />
+        <UserData
+          onDataUpdate={updateEmailHandler}
+          onSave={saveChangesHandler}
+          label="Email"
+          userData={userData.email}
+        />
+        <UserData
+          onDataUpdate={updatePasswordHandler}
+          onSave={saveChangesHandler}
+          label="Password"
+          userData="********"
+        />
         <UserData
           onDataUpdate={updateUserNameHandler}
           onSave={saveChangesHandler}

@@ -15,6 +15,9 @@ const ErrorContainer = ({ errors }) => {
         />
         <Text style={styles.headingText}>Error</Text>
       </View>
+      {errors.submitFailError ? (
+        <Text style={styles.errorText}>{errors.submitFailError}</Text>
+      ) : null}
       {errors.emailError ? (
         <Text style={styles.errorText}>{errors.emailError}</Text>
       ) : null}
