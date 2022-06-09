@@ -19,3 +19,15 @@ export const setNewEmail = (newEmail) => {
 export const setNewPassword = (newPass) => {
   return { type: ACTIONS.UPDATE_PASSWORD, payload: newPass };
 };
+
+export const clearUsername = () => {
+  return { type: ACTIONS.CLEAR_USERNAME };
+};
+
+export const clearEmail = () => {
+  return { type: ACTIONS.CLEAR_EMAIL };
+};
+
+export const clearPassword = () => {
+  return { type: ACTIONS.CLEAR_PASSWORD };
+};

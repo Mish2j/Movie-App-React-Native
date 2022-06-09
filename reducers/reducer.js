@@ -20,8 +20,14 @@ export const accountUpdateReducer = (state, action) => {
       return { ...state, email: action.payload };
     case ACTIONS.UPDATE_PASSWORD:
       return { ...state, password: action.payload };
-    case ACTIONS.UPDATE_AVATAR:
-      return { ...state, imgURL: action.avatar };
+    // case ACTIONS.UPDATE_AVATAR:
+    //   return { ...state, imgURL: action.payload };
+    case ACTIONS.CLEAR_USERNAME:
+      return { ...state, username: "" };
+    case ACTIONS.CLEAR_PASSWORD:
+      return { ...state, password: "" };
+    case ACTIONS.CLEAR_EMAIL:
+      return { ...state, email: "" };
     default:
       return state;
   }

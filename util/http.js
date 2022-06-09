@@ -118,66 +118,6 @@ export const updateUserName = async (newUsername) => {
   });
 };
 
-export const updateUserEmail = (newEmail) => {
-  // try {
-  //   const user = getCurrentUser();
-  //   const resp = await reAuth();
-
-  //   const emailUpadteResponse = await updateEmail(user, newEmail);
-  // } catch (error) {
-  //   throw new Error(error);
-  // }
-
-  const user = getCurrentUser();
-  const credential = EmailAuthProvider.credential(user.email, "password");
-
-  reauthenticateWithCredential(user, credential)
-    .then(() => {
-      // User re-authenticated.
-
-      updateEmail(user, newEmail)
-        .then(() => {
-          // Email updated!
-          // ...
-          console.log("email updated!");
-        })
-        .catch((error) => {
-          // An error occurred
-          // ...
-          console.log(error);
-        });
-    })
-    .catch((error) => {
-      // An error ocurred
-      // ...
-      console.log(error);
-    });
-};
-
-export const updateUserPassword = async (newPassword) => {
-  const user = getCurrentUser();
-  const credential = EmailAuthProvider.credential(user.email, "password");
-
-  reauthenticateWithCredential(user, credential)
-    .then(() => {
-      // User re-authenticated.
-
-      updatePassword(user, newPassword)
-        .then(() => {
-          // Update successful.
-          console.log("password updated!");
-        })
-        .catch((error) => {
-          console.log(error);
-        });
-    })
-    .catch((error) => {
-      // An error ocurred
-      // ...
-      console.log(error);
-    });
-};
-
 export const updateUserAvatar = async (newPhotoURL) => {
   const user = getCurrentUser();
   // update image ...
@@ -186,15 +126,49 @@ export const updateUserAvatar = async (newPhotoURL) => {
   });
 };
 
-export const deleteUserAccount = async () => {
+export const updateUserEmail = (newEmail, password) => {
   const user = getCurrentUser();
+  const credential = EmailAuthProvider.credential(user.email, password);
 
-  deleteUser(user)
-    .then(() => {
-      // User deleted.
-    })
-    .catch((error) => {
-      // An error ocurred
-      // ...
-    });
+  try {
+    reauthenticateWithCredential(user, credential);
+    updateEmail(user, newEmail);
+    console.log("email updated");
+  } catch (error) {
+    // handler errors (email in use)
+    console.log(error);
+    throw new Error(error.code);
+  }
+};
+
+export const updateUserPassword = async (newPassword, oldPassword) => {
+  const user = getCurrentUser();
+  const credential = EmailAuthProvider.credential(user.email, oldPassword);
+
+  try {
+    reauthenticateWithCredential(user, credential);
+    updatePassword(user, newPassword);
+    console.log("password updated");
+  } catch (error) {
+    console.log(error);
+    throw new Error(error.code);
+  }
+};
+
+export const deleteUserAccount = async (password) => {
+  const user = getCurrentUser();
+  const credential = EmailAuthProvider.credential(user.email, password);
+
+  try {
+    reauthenticateWithCredential(user, credential);
+    deleteUser(user);
+    console.log("user deleted");
+  } catch (error) {
+    // auth/requires-recent-login --> empty || deleted
+
+    // (auth/wrong-password)
+    // (auth/user-token-expired) --> deleted
+    console.log(error);
+    throw new Error(error.code);
+  }
 };

@@ -4,7 +4,9 @@ import { Alert, View, StyleSheet, Pressable, Text } from "react-native";
 import * as reducer from "../../reducers/index";
 import { COLORS } from "../../constants/styles";
 import { AuthContext } from "../../store/auth-context";
+import { ERROR } from "../../constants/config";
 import {
+  deleteUserAccount,
   getUserProfile,
   signOutUser,
   updateUserEmail,
@@ -39,6 +41,16 @@ const UserAccount = () => {
     initialState
   );
 
+  const signOutHandler = async () => {
+    try {
+      setSigningout(true);
+      signOutUser();
+      authCtx.logoutUser();
+    } catch (error) {
+      setSigningout(false);
+    }
+  };
+
   const updateUsername = (newUsername) => {
     dispatch(reducer.setNewUsername(newUsername));
   };
@@ -51,20 +63,42 @@ const UserAccount = () => {
     dispatch(reducer.setNewPassword(newPass));
   };
 
-  const saveNewEmail = () => {
-    const emailErr = validateEmail(accountDetails.email);
-    if (emailErr) {
-      console.log(emailErr);
-      return;
-    }
+  const saveNewEmail = async () => {
+    try {
+      const emailErr = validateEmail(accountDetails.email);
 
-    updateUserEmail(accountDetails.email);
+      if (emailErr) throw new Error(emailErr);
+
+      Alert.prompt(
+        "Please re-enter your password",
+        null,
+        {
+          text: "OK",
+          onPress: (password) =>
+            updateUserEmail(accountDetails.email, password),
+        },
+        "secure-text"
+      );
+    } catch (error) {
+      dispatch(reducer.clearEmail());
+      console.log(error);
+      // let errMsg = "";
+      // switch (error) {
+      //   case "auth/email-already-in-use":
+      //     errMsg = ERROR.EMAIL_EXISTS;
+      //     break;
+      //   default:
+      //     errMsg = error;
+      // }
+      // Alert.alert("Error!", error);
+    }
   };
 
   const saveNewUsername = () => {
     const nameErr = validateName(accountDetails.username);
     if (nameErr) {
-      console.log(nameErr);
+      dispatch(reducer.clearUsername());
+      Alert.alert("Error!", nameErr);
       return;
     }
     updateUserName(accountDetails.username);
@@ -73,26 +107,42 @@ const UserAccount = () => {
   const saveNewPassword = () => {
     const passErr = validatePassword(accountDetails.password);
     if (passErr) {
-      console.log(passErr);
+      dispatch(reducer.clearPassword());
+      Alert.alert("Error!", passErr);
       return;
     }
-    updateUserPassword(accountDetails.password);
+    Alert.prompt(
+      "Please re-enter your old password",
+      null,
+      {
+        text: "OK",
+        onPress: (oldPassword) =>
+          updateUserPassword(accountDetails.password, oldPassword),
+      },
+      "secure-text"
+    );
   };
 
-  const signOutHandler = async () => {
-    try {
-      setSigningout(true);
-      signOutUser();
-      authCtx.logoutUser();
-    } catch (error) {
-      setSigningout(false);
-    }
+  const deleteAcc = (password) => {
+    deleteUserAccount(password);
+    signOutHandler();
+    Alert.alert("Note!", "Your account has been successfully deleted!");
   };
 
   const deleteAccountHandler = () => {
-    Alert.alert(
+    Alert.prompt(
       "Attention",
-      "Are you sure you want to permanently delete your accout?"
+      "Are you sure you want to permanently delete your accout?",
+
+      [
+        {
+          text: "Cancel",
+          style: "cancel",
+        },
+        { text: "Delete", onPress: deleteAcc },
+      ],
+
+      "secure-text"
     );
   };
 
