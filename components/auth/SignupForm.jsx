@@ -1,7 +1,6 @@
 import { useState, useContext } from "react";
 import { StyleSheet } from "react-native";
 
-import { ERROR } from "../../constants/config";
 import { COLORS } from "../../constants/styles";
 import { createUser } from "../../util/http";
 import {
@@ -9,6 +8,7 @@ import {
   validateEmail,
   validateName,
   validatePassword,
+  serverErrorHandler,
 } from "../../util/helpers";
 import { AuthContext } from "../../store/auth-context";
 import { useNavigation } from "@react-navigation/native";
@@ -31,16 +31,6 @@ const SignupForm = ({ onError }) => {
 
   const showPasswordHandler = () => {
     setIsPasswordHidden((currentState) => !currentState);
-  };
-
-  const handleSignupError = (errCode) => {
-    switch (errCode) {
-      case "auth/email-already-in-use":
-        onError({ submitFailErrMsg: ERROR.EMAIL_EXISTS });
-        break;
-      default:
-        onError({ submitFailErrMsg: ERROR.SIGNUP_FAIL });
-    }
   };
 
   const emailHandler = (userEmail) => {
@@ -85,9 +75,8 @@ const SignupForm = ({ onError }) => {
   };
 
   const formSubmitHandler = async () => {
-    setIsAuthenticating(true);
-
     try {
+      setIsAuthenticating(true);
       let isValid = validateForm();
 
       if (!isValid) return;
@@ -102,7 +91,7 @@ const SignupForm = ({ onError }) => {
       navigation.navigate("Account");
     } catch (error) {
       setIsAuthenticating(false);
-      handleSignupError(error.message);
+      onError({ submitFailErrMsg: serverErrorHandler(error.message) });
     }
   };
 

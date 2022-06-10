@@ -2,10 +2,13 @@ import { useState, useContext } from "react";
 import { StyleSheet } from "react-native";
 
 import { useNavigation } from "@react-navigation/native";
-import { ERROR } from "../../constants/config";
 import { COLORS } from "../../constants/styles";
 import { loginUser } from "../../util/http";
-import { validateEmail, validatePassword } from "../../util/helpers";
+import {
+  validateEmail,
+  validatePassword,
+  serverErrorHandler,
+} from "../../util/helpers";
 import { AuthContext } from "../../store/auth-context";
 
 import Input from "../UI/Input";
@@ -27,27 +30,6 @@ const LoginForm = ({ onError }) => {
     setIsPasswordHidden((currentState) => !currentState);
   };
 
-  const handleLoginError = (error) => {
-    switch (error) {
-      case "auth/user-disabled":
-        onError({ submitFailErrMsg: ERROR.DISABLED_ACCOUNT });
-        break;
-      case "auth/user-not-found":
-        onError({ submitFailErrMsg: ERROR.NO_USER });
-        break;
-      case "auth/wrong-password":
-        onError({ submitFailErrMsg: ERROR.WRONG_PASSWORD });
-        break;
-      case "auth/too-many-requests":
-        onError({
-          submitFailErrMsg: ERROR.MANY_REQUESTS,
-        });
-        break;
-      default:
-        onError({ submitFailErrMsg: ERROR.LOGIN_FAIL });
-    }
-  };
-
   const emailHandler = (userEmail) => {
     setUserCred((curState) => ({ ...curState, email: userEmail }));
   };
@@ -56,34 +38,26 @@ const LoginForm = ({ onError }) => {
     setUserCred((curState) => ({ ...curState, password: userPassword }));
   };
 
-  const validateForm = () => {
-    const passErrMsg = validatePassword(userCred.password);
-    const emailErrMsg = validateEmail(userCred.email);
-
-    const hasErrorMsg = passErrMsg || emailErrMsg;
-
-    if (hasErrorMsg) {
-      onError({ emailErrMsg, passErrMsg });
-      return false;
-    }
-    return true;
-  };
-
+  // FIXME
   const formSubmitHandler = async () => {
-    setIsAuthenticating(true);
+    console.log("logged in");
+    // setIsAuthenticating(true);
+    // const passErrMsg = validatePassword(userCred.password);
+    // const emailErrMsg = validateEmail(userCred.email);
 
-    try {
-      let isValid = validateForm();
+    // try {
+    //   if (passErrMsg || emailErrMsg) throw new Error(emailErrMsg);
 
-      if (!isValid) return;
-
-      const token = await loginUser(userCred.email, userCred.password);
-      authCtx.loginUser(token);
-      navigation.navigate("Account");
-    } catch (error) {
-      setIsAuthenticating(false);
-      handleLoginError(error.message);
-    }
+    //   const token = await loginUser(userCred.email, userCred.password);
+    //   authCtx.loginUser(token);
+    //   navigation.navigate("Account");
+    // } catch (error) {
+    //   console.log(error);
+    //   setIsAuthenticating(false);
+    //   onError({
+    //     submitFailErrMsg: serverErrorHandler(error.message),
+    //   });
+    // }
   };
 
   return (

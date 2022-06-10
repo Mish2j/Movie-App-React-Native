@@ -38,17 +38,35 @@ export const MOVIE_GENRES = [
 ];
 
 export const ERROR = {
-  REQUEST_FAILED: "Request Error!",
+  REQUEST_FAILED: "Request failed!",
   EMAIL_EXISTS: "This email already in use!",
   SIGNUP_FAIL: "Failed to create user! Please try again later.",
   LOGIN_FAIL: "Failed to login! Please try again later.",
-  WRONG_PASSWORD: "Invalid Credentials!",
+  WRONG_PASSWORD: "Invalid Password!",
+  INVALID_CREDENTIALS: "Invalid Credentials!",
   MANY_REQUESTS:
     "Sorry, your account has been disabled due to too many requests! Please try again later.",
   DISABLED_ACCOUNT: "Sorry, your account has been disabled!",
-  NO_USER: `There's no account associated with this email`,
+  NO_USER: `There's no account associated with this email!`,
+  SAME_EMAIL:
+    "You cannot update your old email address with the exact same email address!",
+  GENERAL_ERROR: "Oops! Something went wrong",
 };
 
 export const SERVER_ERROR_CODE = {
-  EMAIL_EXISTS: "auth/email-already-in-use",
+  EMAIL_ALREADY_IN_USE: "auth/email-already-in-use",
+  USER_DISABLED: "auth/user-disabled",
+  USER_NOT_FOUND: "auth/user-not-found",
+  WRONG_PASSWORD: "auth/wrong-password",
+  TOO_MANY_REQUESTS: "auth/too-many-requests",
+  REQUIRES_RECENT_LOGIN: "auth/requires-recent-login",
+  INTERNAL_ERROR: "auth/internal-error",
+};
+
+export const NOTIFICATION = {
+  ACCOUNT_DELETED: "Your account has been successfully deleted!",
+  INFO_CHANGED: "Your account information has been changed.",
+  ACCOUNT_DELETE_CONFIRM:
+    "Are you sure you want to permanently delete your account?",
+  PASSWORD_REENTER: "Please enter your current password.",
 };

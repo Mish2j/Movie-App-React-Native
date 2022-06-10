@@ -4,7 +4,7 @@ import { Alert, View, StyleSheet, Pressable, Text } from "react-native";
 import * as reducer from "../../reducers/index";
 import { COLORS } from "../../constants/styles";
 import { AuthContext } from "../../store/auth-context";
-import { ERROR, SERVER_ERROR_CODE } from "../../constants/config";
+import { ERROR, SERVER_ERROR_CODE, NOTIFICATION } from "../../constants/config";
 import {
   deleteUserAccount,
   getUserProfile,
@@ -17,10 +17,12 @@ import {
   validateEmail,
   validateName,
   validatePassword,
+  serverErrorHandler,
 } from "../../util/helpers";
 
 import BodyWrapper from "../UI/BodyWrapper";
 import IconButton from "../UI/IconButton";
+import Loader from "../UI/Loader";
 import UserData from "./UserData";
 import Avatar from "./Avatar";
 
@@ -43,97 +45,40 @@ const UserAccount = () => {
     initialState
   );
 
-  const signOutHandler = async () => {
-    try {
-      setSigningout(true);
-      signOutUser();
-      authCtx.logoutUser();
-    } catch (error) {
-      setSigningout(false);
-    }
-  };
-
   const updateUsername = (newUsername) => {
     dispatch(reducer.setNewUsername(newUsername));
   };
 
-  const updateEmail = (newEmail) => {
+  const updateEmailState = (newEmail) => {
     dispatch(reducer.setNewEmail(newEmail));
   };
 
-  const updatePassword = (newPass) => {
+  const updatePasswordState = (newPass) => {
     dispatch(reducer.setNewPassword(newPass));
   };
 
-  const handleEmailChange = async (password) => {
+  const accountUpdateHandler = async (
+    currentPassword,
+    handleAsync,
+    updatedValue
+  ) => {
     try {
-      const response = await updateUserEmail(accountDetails.email, password);
+      setIsUpdating(true);
+      await handleAsync(currentPassword, updatedValue);
+
+      Alert.alert("Success", NOTIFICATION.INFO_CHANGED);
     } catch (error) {
-      let errMsg;
-      switch (error.message) {
-        case SERVER_ERROR_CODE.EMAIL_EXISTS:
-          errMsg = ERROR.EMAIL_EXISTS;
-          break;
-        // (auth/requires-recent-login)
-        default:
-          errMsg = error;
-      }
+      let errMsg = serverErrorHandler(error.message);
       Alert.alert("Error!", errMsg);
-    }
-  };
-
-  const saveNewEmail = async () => {
-    try {
-      const emailErr = validateEmail(accountDetails.email);
-      if (emailErr) throw new Error(emailErr);
-
-      if (accountDetails.email === userData.email) {
-        throw new Error(`You can't set the same email`);
-      }
-
-      Alert.prompt(
-        "Please re-enter your password",
-        null,
-        [
-          {
-            text: "Cancel",
-            style: "cancel",
-          },
-          {
-            text: "OK",
-            onPress: handleEmailChange,
-          },
-        ],
-        "secure-text"
-      );
-    } catch (error) {
-      Alert.alert("Error!", error.message);
     } finally {
-      dispatch(reducer.clearEmail());
+      setIsUpdating(false);
     }
   };
 
-  const saveNewUsername = () => {
-    const nameErr = validateName(accountDetails.username);
-    if (nameErr) {
-      dispatch(reducer.clearUsername());
-      Alert.alert("Error!", nameErr);
-      return;
-    }
-    updateUserName(accountDetails.username);
-  };
-
-  const saveNewPassword = () => {
-    const passErr = validatePassword(accountDetails.password);
-    if (passErr) {
-      dispatch(reducer.clearPassword());
-      Alert.alert("Error!", passErr);
-      return;
-    }
-
+  const passwordPrompt = (handler, updatedValue) => {
     Alert.prompt(
-      "Please re-enter your old password",
-      "some text",
+      "Confirm changes",
+      NOTIFICATION.PASSWORD_REENTER,
       [
         {
           text: "Cancel",
@@ -141,25 +86,75 @@ const UserAccount = () => {
         },
         {
           text: "OK",
-          onPress: (oldPassword) =>
-            updateUserPassword(accountDetails.password, oldPassword),
+          onPress: (password) =>
+            accountUpdateHandler(password, handler, updatedValue),
         },
       ],
       "secure-text"
     );
   };
 
-  const deleteAcc = (password) => {
+  const saveNewEmail = async () => {
+    let updatedEmail = accountDetails.email;
+    try {
+      const emailErr = validateEmail(updatedEmail);
+      if (emailErr) throw new Error(emailErr);
+
+      if (updatedEmail === userData.email) {
+        throw new Error(ERROR.SAME_EMAIL);
+      }
+
+      passwordPrompt(updateUserEmail, updatedEmail);
+    } catch (error) {
+      Alert.alert("Error!", error.message);
+    } finally {
+      dispatch(reducer.setNewEmail(""));
+    }
+  };
+
+  const saveNewPassword = async () => {
+    let updatedPassword = accountDetails.password;
+    try {
+      const passErr = validatePassword(updatedPassword);
+
+      if (passErr) throw new Error(passErr);
+
+      passwordPrompt(updateUserPassword, updatedPassword);
+    } catch (error) {
+      Alert.alert("Error!", error.message);
+    } finally {
+      dispatch(reducer.setNewPassword(""));
+    }
+  };
+
+  const saveNewUsername = async () => {
+    try {
+      setIsUpdating(true);
+      const nameErr = validateName(accountDetails.username);
+
+      if (nameErr) throw new Error(nameErr);
+
+      const response = await updateUserName(accountDetails.username);
+    } catch (error) {
+      // handle errors
+      console.log(error);
+      Alert.alert("Error!", error.message);
+    } finally {
+      dispatch(reducer.setNewUsername(""));
+      setIsUpdating(false);
+    }
+  };
+
+  const deleteAcc = async (password) => {
     deleteUserAccount(password);
     signOutHandler();
-    Alert.alert("Note!", "Your account has been successfully deleted!");
+    Alert.alert("Note!", NOTIFICATION.ACCOUNT_DELETED);
   };
 
   const deleteAccountHandler = () => {
     Alert.prompt(
-      "Attention",
-      "Are you sure you want to permanently delete your accout?",
-
+      "Confirm changes",
+      NOTIFICATION.ACCOUNT_DELETE_CONFIRM,
       [
         {
           text: "Cancel",
@@ -167,51 +162,67 @@ const UserAccount = () => {
         },
         { text: "Delete", onPress: deleteAcc },
       ],
-
       "secure-text"
     );
   };
 
+  const signOutHandler = async () => {
+    try {
+      setSigningout(true);
+      await signOutUser();
+      authCtx.logoutUser();
+    } catch (error) {
+      Alert.alert("Error!", ERROR.GENERAL_ERROR);
+      setSigningout(false);
+    }
+  };
+
   return (
     <BodyWrapper color={COLORS.primaryDark}>
-      <View style={styles.container}>
-        <Avatar imgUrl={userData.photoURL} />
-        <UserData
-          onDataUpdate={updateEmail}
-          onSave={saveNewEmail}
-          label="Email"
-          userData={userData.email}
-        />
-        <UserData
-          onDataUpdate={updatePassword}
-          onSave={saveNewPassword}
-          label="Password"
-          userData="********"
-        />
-        <UserData
-          onDataUpdate={updateUsername}
-          onSave={saveNewUsername}
-          label="Username"
-          userData={userData.username}
-        />
-        <IconButton
-          containerStyle={styles.signOutBtn}
-          iconName="log-out-outline"
-          iconSize={20}
-          iconColor={COLORS.textDark}
-          text={signingout ? "Wait..." : "Sign Out"}
-          onPress={signOutHandler}
-        />
-        <Pressable
-          onPress={deleteAccountHandler}
-          style={({ pressed }) => [
-            styles.deleteBtn,
-            pressed && styles.deleteBtnPressed,
-          ]}
-        >
-          <Text style={styles.deleteBtnText}>Delete my account</Text>
-        </Pressable>
-      </View>
+      {isUpdating ? (
+        <Loader />
+      ) : (
+        <View style={styles.container}>
+          <Avatar imgUrl={userData.photoURL} />
+
+          <UserData
+            onDataUpdate={updateEmailState}
+            onSave={saveNewEmail}
+            label="Email"
+            userData={userData.email}
+          />
+          <UserData
+            onDataUpdate={updatePasswordState}
+            onSave={saveNewPassword}
+            label="Password"
+            userData="********"
+          />
+          <UserData
+            onDataUpdate={updateUsername}
+            onSave={saveNewUsername}
+            label="Username"
+            userData={userData.username || "anonymous"}
+          />
+
+          <IconButton
+            containerStyle={styles.signOutBtn}
+            iconName="log-out-outline"
+            iconSize={20}
+            iconColor={COLORS.textDark}
+            text={signingout ? "Wait..." : "Sign Out"}
+            onPress={signOutHandler}
+          />
+          <Pressable
+            onPress={deleteAccountHandler}
+            style={({ pressed }) => [
+              styles.deleteBtn,
+              pressed && styles.deleteBtnPressed,
+            ]}
+          >
+            <Text style={styles.deleteBtnText}>Delete my account</Text>
+          </Pressable>
+        </View>
+      )}
     </BodyWrapper>
   );
 };

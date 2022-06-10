@@ -92,7 +92,11 @@ export const loginUser = async (email, password) => {
 };
 
 export const signOutUser = async () => {
-  const response = await signOut(authentication);
+  try {
+    const response = await signOut(authentication);
+  } catch (error) {
+    throw new Error(error);
+  }
 };
 
 const getCurrentUser = () => {
@@ -113,9 +117,13 @@ export const getUserProfile = () => {
 
 export const updateUserName = async (newUsername) => {
   const user = getCurrentUser();
-  await updateProfile(user, {
-    displayName: newUsername,
-  });
+  try {
+    await updateProfile(user, {
+      displayName: newUsername,
+    });
+  } catch (error) {
+    throw new Error(error.code);
+  }
 };
 
 export const updateUserAvatar = async (newPhotoURL) => {
@@ -126,9 +134,9 @@ export const updateUserAvatar = async (newPhotoURL) => {
   });
 };
 
-export const updateUserEmail = async (newEmail, password) => {
+export const updateUserEmail = async (currentPassword, newEmail) => {
   const user = getCurrentUser();
-  const credential = EmailAuthProvider.credential(user.email, password);
+  const credential = EmailAuthProvider.credential(user.email, currentPassword);
 
   try {
     await reauthenticateWithCredential(user, credential);
@@ -138,9 +146,9 @@ export const updateUserEmail = async (newEmail, password) => {
   }
 };
 
-export const updateUserPassword = async (newPassword, oldPassword) => {
+export const updateUserPassword = async (currentPassword, newPassword) => {
   const user = getCurrentUser();
-  const credential = EmailAuthProvider.credential(user.email, oldPassword);
+  const credential = EmailAuthProvider.credential(user.email, currentPassword);
 
   try {
     await reauthenticateWithCredential(user, credential);

@@ -1,3 +1,5 @@
+import { ERROR, SERVER_ERROR_CODE } from "../constants/config";
+
 const isNotEmpty = (value) => {
   if (value === null || typeof value === "undefined") return false;
   if (value.trim() === "") return false;
@@ -68,4 +70,34 @@ export const validateConfirmPassword = (password, confirmPassword) => {
 
 export const validateURL = (URL) => {
   // isValid URL ...
+};
+
+export const serverErrorHandler = (error) => {
+  let errorMessage = "";
+
+  switch (error) {
+    case SERVER_ERROR_CODE.EMAIL_ALREADY_IN_USE:
+      errorMessage = ERROR.EMAIL_EXISTS;
+      break;
+    case SERVER_ERROR_CODE.REQUIRES_RECENT_LOGIN:
+    case SERVER_ERROR_CODE.WRONG_PASSWORD:
+      errorMessage = ERROR.INVALID_CREDENTIALS;
+      break;
+    case SERVER_ERROR_CODE.INTERNAL_ERROR:
+      errorMessage = ERROR.REQUEST_FAILED;
+      break;
+    case SERVER_ERROR_CODE.USER_DISABLED:
+      errorMessage = ERROR.DISABLED_ACCOUNT;
+      break;
+    case SERVER_ERROR_CODE.USER_NOT_FOUND:
+      errorMessage = ERROR.NO_USER;
+      break;
+    case SERVER_ERROR_CODE.TOO_MANY_REQUESTS:
+      errorMessage = ERROR.MANY_REQUESTS;
+      break;
+    default:
+      errorMessage = ERROR.GENERAL_ERROR;
+  }
+
+  return errorMessage;
 };
