@@ -4,7 +4,7 @@ import { Alert, View, StyleSheet, Pressable, Text } from "react-native";
 import * as reducer from "../../reducers/index";
 import { COLORS } from "../../constants/styles";
 import { AuthContext } from "../../store/auth-context";
-import { ERROR } from "../../constants/config";
+import { ERROR, SERVER_ERROR_CODE } from "../../constants/config";
 import {
   deleteUserAccount,
   getUserProfile,
@@ -28,6 +28,8 @@ const UserAccount = () => {
   const [signingout, setSigningout] = useState(false);
   const authCtx = useContext(AuthContext);
   const userData = getUserProfile();
+
+  const [isUpdating, setIsUpdating] = useState(false);
 
   const initialState = {
     username: "",
@@ -63,34 +65,51 @@ const UserAccount = () => {
     dispatch(reducer.setNewPassword(newPass));
   };
 
+  const handleEmailChange = async (password) => {
+    try {
+      const response = await updateUserEmail(accountDetails.email, password);
+    } catch (error) {
+      let errMsg;
+      switch (error.message) {
+        case SERVER_ERROR_CODE.EMAIL_EXISTS:
+          errMsg = ERROR.EMAIL_EXISTS;
+          break;
+        // (auth/requires-recent-login)
+        default:
+          errMsg = error;
+      }
+      Alert.alert("Error!", errMsg);
+    }
+  };
+
   const saveNewEmail = async () => {
     try {
       const emailErr = validateEmail(accountDetails.email);
-
       if (emailErr) throw new Error(emailErr);
+
+      if (accountDetails.email === userData.email) {
+        throw new Error(`You can't set the same email`);
+      }
 
       Alert.prompt(
         "Please re-enter your password",
         null,
-        {
-          text: "OK",
-          onPress: (password) =>
-            updateUserEmail(accountDetails.email, password),
-        },
+        [
+          {
+            text: "Cancel",
+            style: "cancel",
+          },
+          {
+            text: "OK",
+            onPress: handleEmailChange,
+          },
+        ],
         "secure-text"
       );
     } catch (error) {
+      Alert.alert("Error!", error.message);
+    } finally {
       dispatch(reducer.clearEmail());
-      console.log(error);
-      // let errMsg = "";
-      // switch (error) {
-      //   case "auth/email-already-in-use":
-      //     errMsg = ERROR.EMAIL_EXISTS;
-      //     break;
-      //   default:
-      //     errMsg = error;
-      // }
-      // Alert.alert("Error!", error);
     }
   };
 
@@ -111,14 +130,21 @@ const UserAccount = () => {
       Alert.alert("Error!", passErr);
       return;
     }
+
     Alert.prompt(
       "Please re-enter your old password",
-      null,
-      {
-        text: "OK",
-        onPress: (oldPassword) =>
-          updateUserPassword(accountDetails.password, oldPassword),
-      },
+      "some text",
+      [
+        {
+          text: "Cancel",
+          style: "cancel",
+        },
+        {
+          text: "OK",
+          onPress: (oldPassword) =>
+            updateUserPassword(accountDetails.password, oldPassword),
+        },
+      ],
       "secure-text"
     );
   };

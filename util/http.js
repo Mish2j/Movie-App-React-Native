@@ -113,7 +113,7 @@ export const getUserProfile = () => {
 
 export const updateUserName = async (newUsername) => {
   const user = getCurrentUser();
-  updateProfile(user, {
+  await updateProfile(user, {
     displayName: newUsername,
   });
 };
@@ -121,22 +121,19 @@ export const updateUserName = async (newUsername) => {
 export const updateUserAvatar = async (newPhotoURL) => {
   const user = getCurrentUser();
   // update image ...
-  updateProfile(user, {
+  await updateProfile(user, {
     photoURL: newPhotoURL,
   });
 };
 
-export const updateUserEmail = (newEmail, password) => {
+export const updateUserEmail = async (newEmail, password) => {
   const user = getCurrentUser();
   const credential = EmailAuthProvider.credential(user.email, password);
 
   try {
-    reauthenticateWithCredential(user, credential);
-    updateEmail(user, newEmail);
-    console.log("email updated");
+    await reauthenticateWithCredential(user, credential);
+    await updateEmail(user, newEmail);
   } catch (error) {
-    // handler errors (email in use)
-    console.log(error);
     throw new Error(error.code);
   }
 };
@@ -146,11 +143,9 @@ export const updateUserPassword = async (newPassword, oldPassword) => {
   const credential = EmailAuthProvider.credential(user.email, oldPassword);
 
   try {
-    reauthenticateWithCredential(user, credential);
-    updatePassword(user, newPassword);
-    console.log("password updated");
+    await reauthenticateWithCredential(user, credential);
+    await updatePassword(user, newPassword);
   } catch (error) {
-    console.log(error);
     throw new Error(error.code);
   }
 };
@@ -160,15 +155,13 @@ export const deleteUserAccount = async (password) => {
   const credential = EmailAuthProvider.credential(user.email, password);
 
   try {
-    reauthenticateWithCredential(user, credential);
-    deleteUser(user);
-    console.log("user deleted");
+    await reauthenticateWithCredential(user, credential);
+    await deleteUser(user);
   } catch (error) {
     // auth/requires-recent-login --> empty || deleted
 
     // (auth/wrong-password)
     // (auth/user-token-expired) --> deleted
-    console.log(error);
     throw new Error(error.code);
   }
 };

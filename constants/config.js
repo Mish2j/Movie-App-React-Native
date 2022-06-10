@@ -48,3 +48,7 @@ export const ERROR = {
   DISABLED_ACCOUNT: "Sorry, your account has been disabled!",
   NO_USER: `There's no account associated with this email`,
 };
+
+export const SERVER_ERROR_CODE = {
+  EMAIL_EXISTS: "auth/email-already-in-use",
+};
