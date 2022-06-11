@@ -5,8 +5,6 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 const initialState = {
   token: null,
   isLoggedin: false,
-  firstName: "",
-  lastName: "",
   loginUser() {},
   createUser() {},
   logoutUser() {},

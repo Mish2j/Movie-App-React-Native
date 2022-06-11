@@ -1,4 +1,4 @@
-import { ScrollView, StyleSheet } from "react-native";
+import { ScrollView, StyleSheet, View, SectionList } from "react-native";
 
 import { COLORS } from "../constants/styles";
 
@@ -7,7 +7,7 @@ import Body from "../components/homeScreen/Body";
 
 const HomeScreen = () => {
   return (
-    <ScrollView style={styles.container} nestedScrollEnabled={true}>
+    <ScrollView style={styles.container}>
       <Hero />
       <Body />
     </ScrollView>

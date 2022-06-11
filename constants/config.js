@@ -50,7 +50,7 @@ export const ERROR = {
   NO_USER: `There's no account associated with this email!`,
   SAME_EMAIL:
     "You cannot update your old email address with the exact same email address!",
-  GENERAL_ERROR: "Oops! Something went wrong",
+  GENERAL_ERROR: "Oops! Something went wrong.",
 };
 
 export const SERVER_ERROR_CODE = {

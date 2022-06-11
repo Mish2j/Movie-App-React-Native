@@ -4,7 +4,7 @@ import { Alert, View, StyleSheet, Pressable, Text } from "react-native";
 import * as reducer from "../../reducers/index";
 import { COLORS } from "../../constants/styles";
 import { AuthContext } from "../../store/auth-context";
-import { ERROR, SERVER_ERROR_CODE, NOTIFICATION } from "../../constants/config";
+import { ERROR, NOTIFICATION } from "../../constants/config";
 import {
   deleteUserAccount,
   getUserProfile,
@@ -134,10 +134,8 @@ const UserAccount = () => {
 
       if (nameErr) throw new Error(nameErr);
 
-      const response = await updateUserName(accountDetails.username);
+      await updateUserName(accountDetails.username);
     } catch (error) {
-      // handle errors
-      console.log(error);
       Alert.alert("Error!", error.message);
     } finally {
       dispatch(reducer.setNewUsername(""));
@@ -145,25 +143,36 @@ const UserAccount = () => {
     }
   };
 
-  const deleteAcc = async (password) => {
-    deleteUserAccount(password);
-    signOutHandler();
-    Alert.alert("Note!", NOTIFICATION.ACCOUNT_DELETED);
+  const processDeleteAccount = async (password) => {
+    try {
+      setIsUpdating(true);
+      await deleteUserAccount(password);
+      signOutHandler();
+      Alert.alert("Note!", NOTIFICATION.ACCOUNT_DELETED);
+    } catch (error) {
+      let errMsg = serverErrorHandler(error.message);
+      Alert.alert("Error!", errMsg);
+      setIsUpdating(false);
+    }
   };
 
-  const deleteAccountHandler = () => {
-    Alert.prompt(
-      "Confirm changes",
-      NOTIFICATION.ACCOUNT_DELETE_CONFIRM,
-      [
-        {
-          text: "Cancel",
-          style: "cancel",
-        },
-        { text: "Delete", onPress: deleteAcc },
-      ],
-      "secure-text"
-    );
+  const deleteAccountHandler = async () => {
+    try {
+      Alert.prompt(
+        "Confirm changes",
+        NOTIFICATION.ACCOUNT_DELETE_CONFIRM,
+        [
+          {
+            text: "Cancel",
+            style: "cancel",
+          },
+          { text: "Delete", onPress: processDeleteAccount },
+        ],
+        "secure-text"
+      );
+    } catch (error) {
+      Alert.alert("Error!", error.message);
+    }
   };
 
   const signOutHandler = async () => {

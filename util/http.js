@@ -126,13 +126,13 @@ export const updateUserName = async (newUsername) => {
   }
 };
 
-export const updateUserAvatar = async (newPhotoURL) => {
-  const user = getCurrentUser();
-  // update image ...
-  await updateProfile(user, {
-    photoURL: newPhotoURL,
-  });
-};
+// export const updateUserAvatar = async (newPhotoURL) => {
+//   const user = getCurrentUser();
+//   // update image ...
+//   await updateProfile(user, {
+//     photoURL: newPhotoURL,
+//   });
+// };
 
 export const updateUserEmail = async (currentPassword, newEmail) => {
   const user = getCurrentUser();
@@ -166,10 +166,6 @@ export const deleteUserAccount = async (password) => {
     await reauthenticateWithCredential(user, credential);
     await deleteUser(user);
   } catch (error) {
-    // auth/requires-recent-login --> empty || deleted
-
-    // (auth/wrong-password)
-    // (auth/user-token-expired) --> deleted
     throw new Error(error.code);
   }
 };

@@ -38,26 +38,31 @@ const LoginForm = ({ onError }) => {
     setUserCred((curState) => ({ ...curState, password: userPassword }));
   };
 
-  // FIXME
   const formSubmitHandler = async () => {
-    console.log("logged in");
-    // setIsAuthenticating(true);
-    // const passErrMsg = validatePassword(userCred.password);
-    // const emailErrMsg = validateEmail(userCred.email);
+    setIsAuthenticating(true);
+    const passErrMsg = validatePassword(userCred.password);
+    const emailErrMsg = validateEmail(userCred.email);
 
-    // try {
-    //   if (passErrMsg || emailErrMsg) throw new Error(emailErrMsg);
+    const hasErrorMsg = passErrMsg || emailErrMsg;
 
-    //   const token = await loginUser(userCred.email, userCred.password);
-    //   authCtx.loginUser(token);
-    //   navigation.navigate("Account");
-    // } catch (error) {
-    //   console.log(error);
-    //   setIsAuthenticating(false);
-    //   onError({
-    //     submitFailErrMsg: serverErrorHandler(error.message),
-    //   });
-    // }
+    try {
+      if (hasErrorMsg) throw new Error([emailErrMsg, passErrMsg]);
+
+      const token = await loginUser(userCred.email, userCred.password);
+      authCtx.loginUser(token);
+      navigation.navigate("Account");
+    } catch (error) {
+      setIsAuthenticating(false);
+
+      if (hasErrorMsg) {
+        onError({ emailErrMsg, passErrMsg });
+        return;
+      }
+
+      onError({
+        submitFailErrMsg: serverErrorHandler(error.message),
+      });
+    }
   };
 
   return (

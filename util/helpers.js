@@ -59,22 +59,19 @@ export const validateName = (name) => {
 
 export const validateConfirmPassword = (password, confirmPassword) => {
   let error = "";
-
   if (password !== confirmPassword) {
     error = "Your password and confirmation password do not match!";
     return error;
   }
-
   return error;
 };
 
-export const validateURL = (URL) => {
-  // isValid URL ...
-};
+// export const validateURL = (URL) => {
+//   // isValid URL ...
+// };
 
 export const serverErrorHandler = (error) => {
   let errorMessage = "";
-
   switch (error) {
     case SERVER_ERROR_CODE.EMAIL_ALREADY_IN_USE:
       errorMessage = ERROR.EMAIL_EXISTS;

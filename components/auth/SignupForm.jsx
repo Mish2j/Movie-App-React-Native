@@ -49,7 +49,9 @@ const SignupForm = ({ onError }) => {
     setUserCred((curState) => ({ ...curState, username }));
   };
 
-  const validateForm = () => {
+  const formSubmitHandler = async () => {
+    setIsAuthenticating(true);
+
     const passErrMsg = validatePassword(userCred.password);
     const emailErrMsg = validateEmail(userCred.email);
     const usernameErrMsg = validateName(userCred.username);
@@ -61,25 +63,14 @@ const SignupForm = ({ onError }) => {
     const hasErrorMsg =
       passErrMsg || emailErrMsg || usernameErrMsg || repeatPassErrorMsg;
 
-    if (hasErrorMsg) {
-      onError({
-        emailErrMsg,
-        passErrMsg,
-        usernameErrMsg,
-        repeatPassErrorMsg,
-      });
-      return false;
-    }
-
-    return true;
-  };
-
-  const formSubmitHandler = async () => {
     try {
-      setIsAuthenticating(true);
-      let isValid = validateForm();
-
-      if (!isValid) return;
+      if (hasErrorMsg)
+        throw new Error([
+          emailErrMsg,
+          passErrMsg,
+          usernameErrMsg,
+          repeatPassErrorMsg,
+        ]);
 
       const token = await createUser(
         userCred.email,
@@ -88,9 +79,20 @@ const SignupForm = ({ onError }) => {
       );
 
       authCtx.loginUser(token);
-      navigation.navigate("Account");
+      navigation.navigate("Home");
     } catch (error) {
       setIsAuthenticating(false);
+
+      if (hasErrorMsg) {
+        onError({
+          emailErrMsg,
+          passErrMsg,
+          usernameErrMsg,
+          repeatPassErrorMsg,
+        });
+        return;
+      }
+
       onError({ submitFailErrMsg: serverErrorHandler(error.message) });
     }
   };

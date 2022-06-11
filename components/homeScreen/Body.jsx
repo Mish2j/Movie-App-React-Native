@@ -17,7 +17,7 @@ import BodyWrapper from "../UI/BodyWrapper";
 import Loader from "../UI/Loader";
 
 const Body = () => {
-  const [isLoading, setIsloading] = useState(false);
+  const [isLoading, setIsloading] = useState(true);
   const [movies, setMovies] = useState({
     popularMovies: [],
     topRatedMovies: [],
@@ -34,7 +34,6 @@ const Body = () => {
 
   useEffect(() => {
     const getData = async () => {
-      setIsloading(true);
       try {
         const [popularMovies, topRatedMovies, upcomingMovies] =
           await Promise.all([
@@ -49,7 +48,7 @@ const Body = () => {
           upcomingMovies,
         });
       } catch (error) {
-        Alert.alert(ERROR.REQUEST_FAILED, "Failed to fetch Movies!");
+        Alert.alert("Error!", ERROR.GENERAL_ERROR);
       } finally {
         setIsloading(false);
       }
@@ -70,7 +69,7 @@ const Body = () => {
 
       setFilteredMovies({ categoryName: catName, movies: filteredMoviesData });
     } catch (error) {
-      Alert.alert(ERROR.REQUEST_FAILED, "Failed to fetch Movies!");
+      Alert.alert("Error!", ERROR.GENERAL_ERROR);
     } finally {
       setIsloading(false);
     }
