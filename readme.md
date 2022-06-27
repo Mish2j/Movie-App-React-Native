@@ -3,14 +3,14 @@
 This is a cross-platform movie streaming mobile application for IOS and ANDROID built with React Native.
 
 
-## Introduction
+<!-- ## Introduction -->
 
-Intro...
+<!-- Intro... -->
 
 
-## How to run the app 
+<!-- ## How to run the app 
 
-NOTE you need special tools to run this app.
+NOTE you need special tools to run this app. -->
 
 
 ## User Stories
