@@ -66,10 +66,6 @@ export const validateConfirmPassword = (password, confirmPassword) => {
   return error;
 };
 
-// export const validateURL = (URL) => {
-//   // isValid URL ...
-// };
-
 export const serverErrorHandler = (error) => {
   let errorMessage = "";
   switch (error) {

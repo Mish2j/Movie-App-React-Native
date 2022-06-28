@@ -30,7 +30,7 @@ const styles = StyleSheet.create({
   inputContainer: {
     marginTop: 5,
     backgroundColor: COLORS.primaryLight,
-    padding: 5,
+    padding: 8,
     borderRadius: 5,
     flexDirection: "row",
     marginBottom: 15,

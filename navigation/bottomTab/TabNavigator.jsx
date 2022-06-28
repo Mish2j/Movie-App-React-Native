@@ -29,6 +29,7 @@ const TabNavigator = () => {
         ...screenOptions,
         headerRight: ({ tintColor }) => (
           <IconButton
+            containerStyle={{ marginRight: 7 }}
             iconName="person-outline"
             iconColor={tintColor}
             iconSize={24}
