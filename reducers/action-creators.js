@@ -19,3 +19,7 @@ export const setNewEmail = (newEmail) => {
 export const setNewPassword = (newPass) => {
   return { type: ACTIONS.UPDATE_PASSWORD, payload: newPass };
 };
+
+export const setNewAvatar = (newImgURI) => {
+  return { type: ACTIONS.UPDATE_AVATAR, payload: newImgURI };
+};

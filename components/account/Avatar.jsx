@@ -5,51 +5,61 @@ import {
   launchCameraAsync,
   useCameraPermissions,
   PermissionStatus,
+  launchImageLibraryAsync,
 } from "expo-image-picker";
 
 import { COLORS } from "../../constants/styles";
 
-const Avatar = () => {
+const Avatar = ({ imgURL, onSave, onUpdate }) => {
   const [status, requestPermission] = useCameraPermissions();
-  const [imageURI, setImageURI] = useState(null);
+  const [isUpdating, setIsUpdating] = useState(false);
+  // const [imageURI, setImageURI] = useState(null);
 
-  const verifyPermissions = async () => {
-    if (status.status === PermissionStatus.UNDETERMINED) {
-      const response = await requestPermission();
+  // const verifyPermissions = async () => {
+  //   if (status.status === PermissionStatus.UNDETERMINED) {
+  //     const response = await requestPermission();
 
-      return response.granted;
-    }
+  //     return response.granted;
+  //   }
 
-    if (status.status === PermissionStatus.DENIED) {
-      console.log("Operation Failed!");
-      return false;
-    }
+  //   if (status.status === PermissionStatus.DENIED) {
+  //     console.log("Operation Failed!");
+  //     return false;
+  //   }
 
-    return true;
-  };
+  //   return true;
+  // };
 
   const imageUpdateHandler = async () => {
-    const hasPermission = await verifyPermissions();
+    // const hasPermission = await verifyPermissions();
+    // if (!hasPermission) return;
+    // const image = await launchCameraAsync({
+    //   allowsEditing: true,
+    //   aspect: [16, 9],
+    //   quality: 0.5,
+    // });
+    // console.log(image);
+    // setImageURI(image.uri);
 
-    if (!hasPermission) return;
+    if (isUpdating) {
+      onSave();
+    } else {
+      const pickImage = await launchImageLibraryAsync({
+        allowsEditing: true,
+        quality: 0.5,
+      });
 
-    const image = await launchCameraAsync({
-      allowsEditing: true,
-      aspect: [16, 9],
-      quality: 0.5,
-    });
-    console.log(image);
+      onUpdate(pickImage.uri);
+    }
 
-    setImageURI(image.uri);
+    setIsUpdating((prevState) => !prevState);
   };
 
   return (
     <View style={styles.profileInfoContainer}>
       <Image
         source={
-          imageURI
-            ? { uri: imageURI }
-            : require("../../assets/default-avatar.jpg")
+          imgURL ? { uri: imgURL } : require("../../assets/default-avatar.jpg")
         }
         style={styles.profileImage}
       />
@@ -57,7 +67,9 @@ const Avatar = () => {
         onPress={imageUpdateHandler}
         style={({ pressed }) => pressed && styles.avatarBtnPressed}
       >
-        <Text style={styles.avatarBtn}>Update profile image</Text>
+        <Text style={styles.avatarBtn}>
+          {isUpdating ? "Save" : "Update profile image"}
+        </Text>
       </Pressable>
     </View>
   );
@@ -75,8 +87,8 @@ const styles = StyleSheet.create({
     width: 90,
     height: 90,
     alignSelf: "center",
+    zIndex: 2,
   },
-
   avatarBtn: {
     marginTop: 10,
     alignSelf: "center",

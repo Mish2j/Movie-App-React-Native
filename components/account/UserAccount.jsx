@@ -9,6 +9,7 @@ import {
   deleteUserAccount,
   getUserProfile,
   signOutUser,
+  updateUserAvatar,
   updateUserEmail,
   updateUserName,
   updateUserPassword,
@@ -36,7 +37,7 @@ const UserAccount = () => {
   const initialState = {
     username: "",
     email: "",
-    imgURL: "",
+    imgURI: "",
     password: "",
   };
 
@@ -45,17 +46,17 @@ const UserAccount = () => {
     initialState
   );
 
-  const updateUsername = (newUsername) => {
+  const updateUsernameState = (newUsername) =>
     dispatch(reducer.setNewUsername(newUsername));
-  };
 
-  const updateEmailState = (newEmail) => {
+  const updateEmailState = (newEmail) =>
     dispatch(reducer.setNewEmail(newEmail));
-  };
 
-  const updatePasswordState = (newPass) => {
+  const updatePasswordState = (newPass) =>
     dispatch(reducer.setNewPassword(newPass));
-  };
+
+  const updateAvatarState = (newImgURI) =>
+    dispatch(reducer.setNewAvatar(newImgURI));
 
   const accountUpdateHandler = async (
     currentPassword,
@@ -143,7 +144,20 @@ const UserAccount = () => {
     }
   };
 
-  const processDeleteAccount = async (password) => {
+  const saveNewAvatar = async () => {
+    try {
+      setIsUpdating(true);
+      await updateUserAvatar(accountDetails.imgURI);
+    } catch (error) {
+      console.log(error);
+      // Alert.alert("Error!", error.message);
+    } finally {
+      dispatch(reducer.setNewAvatar(""));
+      setIsUpdating(false);
+    }
+  };
+
+  const processAccountDelete = async (password) => {
     try {
       setIsUpdating(true);
       await deleteUserAccount(password);
@@ -166,7 +180,7 @@ const UserAccount = () => {
             text: "Cancel",
             style: "cancel",
           },
-          { text: "Delete", onPress: processDeleteAccount },
+          { text: "Delete", onPress: processAccountDelete },
         ],
         "secure-text"
       );
@@ -192,7 +206,11 @@ const UserAccount = () => {
         <Loader />
       ) : (
         <View style={styles.container}>
-          <Avatar imgUrl={userData.photoURL} />
+          <Avatar
+            onUpdate={updateAvatarState}
+            onSave={saveNewAvatar}
+            imgURL={userData.photoURL}
+          />
 
           <UserData
             onDataUpdate={updateEmailState}
@@ -207,7 +225,7 @@ const UserAccount = () => {
             userData="********"
           />
           <UserData
-            onDataUpdate={updateUsername}
+            onDataUpdate={updateUsernameState}
             onSave={saveNewUsername}
             label="Username"
             userData={userData.username || "anonymous"}

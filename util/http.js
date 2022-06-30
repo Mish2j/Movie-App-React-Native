@@ -126,13 +126,18 @@ export const updateUserName = async (newUsername) => {
   }
 };
 
-// export const updateUserAvatar = async (newPhotoURL) => {
-//   const user = getCurrentUser();
-//   // update image ...
-//   await updateProfile(user, {
-//     photoURL: newPhotoURL,
-//   });
-// };
+export const updateUserAvatar = async (newImageURI) => {
+  const user = getCurrentUser();
+
+  try {
+    await updateProfile(user, {
+      photoURL: newImageURI,
+    });
+  } catch (error) {
+    console.log(error);
+    throw new Error(error.code);
+  }
+};
 
 export const updateUserEmail = async (currentPassword, newEmail) => {
   const user = getCurrentUser();

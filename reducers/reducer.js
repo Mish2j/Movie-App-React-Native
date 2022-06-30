@@ -20,8 +20,8 @@ export const accountUpdateReducer = (state, action) => {
       return { ...state, email: action.payload };
     case ACTIONS.UPDATE_PASSWORD:
       return { ...state, password: action.payload };
-    // case ACTIONS.UPDATE_AVATAR:
-    //   return { ...state, imgURL: action.payload };
+    case ACTIONS.UPDATE_AVATAR:
+      return { ...state, imgURI: action.payload };
     default:
       return state;
   }
