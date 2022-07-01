@@ -26,15 +26,6 @@ const VideoPlayer = () => {
     (movie) => movie.id === movieData.id
   );
 
-  const saveMovieHandler = () => {
-    if (isMovieSaved) {
-      myListContext.removeMovie(movieData.id);
-      return;
-    }
-    myListContext.addMovie(movieData);
-    navigation.navigate("MyMovies");
-  };
-
   useEffect(() => {
     const getMovieVideo = async () => {
       try {
@@ -51,7 +42,16 @@ const VideoPlayer = () => {
     getMovieVideo();
   }, [movieId]);
 
-  const onStateChange = useCallback((state) => {
+  const saveMovieHandler = () => {
+    if (isMovieSaved) {
+      myListContext.removeMovie(movieData.id);
+      return;
+    }
+    myListContext.addMovie(movieData);
+    navigation.navigate("MyMovies");
+  };
+
+  const videoStateChangeHandler = useCallback((state) => {
     if (state === "ended") setIsPlaying(false);
     if (state === "playing") setIsPlaying(true);
     if (state === "paused") setIsPlaying(false);
@@ -72,7 +72,7 @@ const VideoPlayer = () => {
         )}
         {!isLoading && (
           <YoutubePlayer
-            onChangeState={onStateChange}
+            onChangeState={videoStateChangeHandler}
             height={"100%"}
             width={"100%"}
             play={isPlaying}

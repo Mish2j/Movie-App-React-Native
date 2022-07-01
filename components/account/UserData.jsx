@@ -1,12 +1,11 @@
-import { useState, useRef } from "react";
+import { useState } from "react";
 import { View, Text, StyleSheet, TextInput } from "react-native";
 
 import { COLORS } from "../../constants/styles";
 
 import IconButton from "../UI/IconButton";
+import TextButton from "../UI/TextButton";
 import Title from "../UI/Title";
-
-import Pressable from "react-native/Libraries/Components/Pressable/Pressable";
 
 const UserData = ({ label, userData, onDataUpdate, onSave }) => {
   const [isEditing, setIsEditing] = useState(false);
@@ -36,15 +35,12 @@ const UserData = ({ label, userData, onDataUpdate, onSave }) => {
               autoCorrect={false}
               autoFocus={true}
             />
-            <Pressable
+            <TextButton
+              color="lightblue"
+              text="Save changes"
               onPress={saveHandler}
-              style={({ pressed }) => [
-                styles.saveBtn,
-                pressed && styles.saveBtnPressed,
-              ]}
-            >
-              <Text style={styles.saveBtnText}>Save changes</Text>
-            </Pressable>
+              containerStyle={styles.saveBtn}
+            />
           </>
         ) : (
           <Text style={styles.userData}>{userData}</Text>
@@ -83,7 +79,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
     padding: 7,
   },
-
   editButton: {
     backgroundColor: COLORS.textLight,
     borderRadius: 5,
@@ -92,12 +87,5 @@ const styles = StyleSheet.create({
   saveBtn: {
     marginTop: 5,
     alignSelf: "flex-start",
-  },
-  saveBtnPressed: {
-    opacity: 0.7,
-  },
-  saveBtnText: {
-    fontSize: 14,
-    color: "lightblue",
   },
 });

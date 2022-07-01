@@ -1,9 +1,11 @@
-import { useState } from "react";
-import { Text, View, StyleSheet, Pressable, ScrollView } from "react-native";
+import { useEffect, useState } from "react";
+import { View, StyleSheet, ScrollView } from "react-native";
+import { useNavigation } from "@react-navigation/native";
 
 import { COLORS } from "../../constants/styles";
 
 import BodyWrapper from "../UI/BodyWrapper";
+import TextButton from "../UI/TextButton";
 import ErrorContainer from "./ErrorContainer";
 import LoginForm from "./LoginForm";
 import SignupForm from "./SignupForm";
@@ -11,6 +13,11 @@ import SignupForm from "./SignupForm";
 const AuthForm = () => {
   const [isLogin, setIsLogin] = useState(true);
   const [formHasError, setFormHasError] = useState(null);
+  const navigation = useNavigation();
+
+  useEffect(() => {
+    navigation.setOptions({ title: isLogin ? "Login" : "Signup" });
+  }, [isLogin]);
 
   const [errors, setErrors] = useState({
     emailError: "",
@@ -63,17 +70,12 @@ const AuthForm = () => {
           <View style={styles.box}>
             {isLogin && <LoginForm onError={handleErrors} />}
             {!isLogin && <SignupForm onError={handleErrors} />}
-            <Pressable
+            <TextButton
               onPress={switchFormHandler}
-              style={({ pressed }) => [
-                styles.newUserBtnContainer,
-                pressed && styles.pressed,
-              ]}
-            >
-              <Text style={styles.newUserBtnText}>
-                {isLogin ? "Create a new user" : "Already have an account"}
-              </Text>
-            </Pressable>
+              containerStyle={styles.newUserBtnContainer}
+              color={COLORS.textDark}
+              text={isLogin ? "Create a new user" : "Already have an account"}
+            />
           </View>
         </View>
       </ScrollView>
@@ -104,13 +106,5 @@ const styles = StyleSheet.create({
   newUserBtnContainer: {
     marginTop: 20,
     alignSelf: "center",
-  },
-  newUserBtnText: {
-    color: COLORS.textDark,
-    fontSize: 16,
-    textAlign: "center",
-  },
-  pressed: {
-    opacity: 0.7,
   },
 });

@@ -16,6 +16,7 @@ import IconButton from "../UI/IconButton";
 
 const LoginForm = ({ onError }) => {
   const navigation = useNavigation();
+
   const [userCred, setUserCred] = useState({
     email: "",
     password: "",

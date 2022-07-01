@@ -1,5 +1,5 @@
 import { useReducer, useState, useContext } from "react";
-import { Alert, View, StyleSheet, Pressable, Text } from "react-native";
+import { Alert, View, StyleSheet } from "react-native";
 
 import * as reducer from "../../reducers/index";
 import { COLORS } from "../../constants/styles";
@@ -24,10 +24,12 @@ import {
 import BodyWrapper from "../UI/BodyWrapper";
 import IconButton from "../UI/IconButton";
 import Loader from "../UI/Loader";
+import TextButton from "../UI/TextButton";
 import UserData from "./UserData";
 import Avatar from "./Avatar";
 
 const UserAccount = () => {
+  console.log("rendered");
   const [signingout, setSigningout] = useState(false);
   const authCtx = useContext(AuthContext);
   const userData = getUserProfile();
@@ -239,15 +241,12 @@ const UserAccount = () => {
             text={signingout ? "Wait..." : "Sign Out"}
             onPress={signOutHandler}
           />
-          <Pressable
+          <TextButton
             onPress={deleteAccountHandler}
-            style={({ pressed }) => [
-              styles.deleteBtn,
-              pressed && styles.deleteBtnPressed,
-            ]}
-          >
-            <Text style={styles.deleteBtnText}>Delete my account</Text>
-          </Pressable>
+            text="Delete my account"
+            color={COLORS.dangerLight}
+            containerStyle={styles.deleteBtn}
+          />
         </View>
       )}
     </BodyWrapper>
@@ -268,12 +267,5 @@ const styles = StyleSheet.create({
   deleteBtn: {
     marginTop: 70,
     alignSelf: "center",
-  },
-  deleteBtnPressed: {
-    opacity: 0.7,
-  },
-  deleteBtnText: {
-    fontSize: 14,
-    color: "red",
   },
 });

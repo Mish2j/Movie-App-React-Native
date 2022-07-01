@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { View, Image, Pressable, Text, StyleSheet } from "react-native";
+import { View, Image, StyleSheet } from "react-native";
 
 import {
   launchCameraAsync,
@@ -10,49 +10,76 @@ import {
 
 import { COLORS } from "../../constants/styles";
 
+import TextButton from "../UI/TextButton";
+import IconButton from "../UI/IconButton";
+
 const Avatar = ({ imgURL, onSave, onUpdate }) => {
   const [status, requestPermission] = useCameraPermissions();
   const [isUpdating, setIsUpdating] = useState(false);
-  // const [imageURI, setImageURI] = useState(null);
+  const [isSaving, setIsSaving] = useState(false);
+  // console.log("Avatar", imgURL);
+  const verifyPermissions = async () => {
+    if (status.status === PermissionStatus.UNDETERMINED) {
+      const response = await requestPermission();
 
-  // const verifyPermissions = async () => {
-  //   if (status.status === PermissionStatus.UNDETERMINED) {
-  //     const response = await requestPermission();
-
-  //     return response.granted;
-  //   }
-
-  //   if (status.status === PermissionStatus.DENIED) {
-  //     console.log("Operation Failed!");
-  //     return false;
-  //   }
-
-  //   return true;
-  // };
-
-  const imageUpdateHandler = async () => {
-    // const hasPermission = await verifyPermissions();
-    // if (!hasPermission) return;
-    // const image = await launchCameraAsync({
-    //   allowsEditing: true,
-    //   aspect: [16, 9],
-    //   quality: 0.5,
-    // });
-    // console.log(image);
-    // setImageURI(image.uri);
-
-    if (isUpdating) {
-      onSave();
-    } else {
-      const pickImage = await launchImageLibraryAsync({
-        allowsEditing: true,
-        quality: 0.5,
-      });
-
-      onUpdate(pickImage.uri);
+      return response.granted;
     }
 
-    setIsUpdating((prevState) => !prevState);
+    if (status.status === PermissionStatus.DENIED) {
+      console.log("Operation Failed!");
+      return false;
+    }
+
+    return true;
+  };
+
+  // TODO REFACTOR
+  const openCamera = async () => {
+    const hasPermission = await verifyPermissions();
+
+    if (!hasPermission) {
+      cancelChangesHandler();
+      return;
+    }
+
+    const image = await launchCameraAsync({
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 0.5,
+    });
+
+    if (image.cancelled) {
+      cancelChangesHandler();
+      return;
+    }
+    onUpdate(image.uri);
+    setIsSaving(true);
+  };
+
+  const openImageLibrary = async () => {
+    // add permissions
+    const image = await launchImageLibraryAsync({
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 0.5,
+    });
+
+    if (image.cancelled) {
+      cancelChangesHandler();
+      return;
+    }
+    onUpdate(image.uri);
+    setIsSaving(true);
+  };
+
+  const cancelChangesHandler = () => {
+    setIsSaving(false);
+    setIsUpdating(false);
+  };
+
+  const saveNewImageHandler = () => {
+    onSave();
+    cancelChangesHandler();
   };
 
   return (
@@ -63,14 +90,57 @@ const Avatar = ({ imgURL, onSave, onUpdate }) => {
         }
         style={styles.profileImage}
       />
-      <Pressable
-        onPress={imageUpdateHandler}
-        style={({ pressed }) => pressed && styles.avatarBtnPressed}
-      >
-        <Text style={styles.avatarBtn}>
-          {isUpdating ? "Save" : "Update profile image"}
-        </Text>
-      </Pressable>
+
+      {!isUpdating && (
+        <TextButton
+          onPress={() => setIsUpdating(true)}
+          color={COLORS.textDark}
+          text="Update profile image"
+          containerStyle={styles.avatarBtn}
+        />
+      )}
+      {isSaving && (
+        <View style={styles.imgPickerButtons}>
+          <TextButton
+            onPress={saveNewImageHandler}
+            color="lightblue"
+            text="Save"
+            containerStyle={styles.avatarBtn}
+          />
+          <TextButton
+            onPress={cancelChangesHandler}
+            color="lightblue"
+            text="Cancel"
+            containerStyle={styles.avatarBtn}
+          />
+        </View>
+      )}
+      {!isSaving && isUpdating && (
+        <TextButton
+          onPress={cancelChangesHandler}
+          color="lightblue"
+          text="Cancel"
+          containerStyle={styles.avatarBtn}
+        />
+      )}
+      {isUpdating && (
+        <View style={styles.imgPickerButtons}>
+          <IconButton
+            iconName="camera-outline"
+            iconColor={COLORS.primaryDark}
+            iconSize={22}
+            onPress={openCamera}
+            containerStyle={styles.imgPickerBtn}
+          />
+          <IconButton
+            iconName="images-outline"
+            iconColor={COLORS.primaryDark}
+            iconSize={22}
+            onPress={openImageLibrary}
+            containerStyle={styles.imgPickerBtn}
+          />
+        </View>
+      )}
     </View>
   );
 };
@@ -87,15 +157,22 @@ const styles = StyleSheet.create({
     width: 90,
     height: 90,
     alignSelf: "center",
-    zIndex: 2,
+    marginBottom: 10,
   },
   avatarBtn: {
-    marginTop: 10,
     alignSelf: "center",
-    fontSize: 14,
-    color: COLORS.textDark,
+    marginBottom: 20,
+    marginHorizontal: 20,
+    backgroundColor: "red",
   },
-  avatarBtnPressed: {
-    opacity: 0.7,
+  imgPickerButtons: {
+    flexDirection: "row",
+    justifyContent: "center",
+  },
+  imgPickerBtn: {
+    backgroundColor: COLORS.textLight,
+    borderRadius: 5,
+    padding: 7,
+    marginHorizontal: 7,
   },
 });

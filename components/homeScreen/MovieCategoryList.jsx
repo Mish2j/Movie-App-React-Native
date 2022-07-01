@@ -1,11 +1,11 @@
 import { useState } from "react";
-import { View, Text, StyleSheet } from "react-native";
-import Pressable from "react-native/Libraries/Components/Pressable/Pressable";
+import { View, StyleSheet } from "react-native";
 
 import { COLORS } from "../../constants/styles";
 import { MOVIE_GENRES } from "../../constants/config";
 
 import IconButton from "../UI/IconButton";
+import TextButton from "../UI/TextButton";
 
 const MovieCategoryList = ({ filterHandler }) => {
   const [isListOpen, setIsListOpen] = useState(false);
@@ -21,16 +21,13 @@ const MovieCategoryList = ({ filterHandler }) => {
 
   const categoryList = MOVIE_GENRES.map((cat) => {
     return (
-      <Pressable
-        onPress={selectedCategoryHandler.bind(null, cat.id, cat.name)}
+      <TextButton
         key={cat.id}
-        style={({ pressed }) => [
-          styles.textContainer,
-          pressed && styles.pressed,
-        ]}
-      >
-        <Text style={styles.text}>{cat.name}</Text>
-      </Pressable>
+        containerStyle={styles.textContainer}
+        text={cat.name}
+        color={COLORS.textLight}
+        onPress={selectedCategoryHandler.bind(null, cat.id, cat.name)}
+      />
     );
   });
 
@@ -69,12 +66,6 @@ const styles = StyleSheet.create({
     padding: 10,
     marginVertical: 3,
     borderRadius: 5,
-  },
-  text: {
-    textAlign: "center",
-    color: COLORS.textLight,
-  },
-  pressed: {
-    opacity: 0.7,
+    alignSelf: "center",
   },
 });

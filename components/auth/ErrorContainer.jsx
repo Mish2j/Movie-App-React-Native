@@ -5,6 +5,12 @@ import { COLORS } from "../../constants/styles";
 import { Ionicons } from "@expo/vector-icons";
 
 const ErrorContainer = ({ errors }) => {
+  const renderErrors = Object.keys(errors).map((errorProp) =>
+    errors[errorProp] ? (
+      <Text style={styles.errorText}>{errors[errorProp]}</Text>
+    ) : null
+  );
+
   return (
     <View style={styles.container}>
       <View style={styles.errorIconContainer}>
@@ -15,21 +21,7 @@ const ErrorContainer = ({ errors }) => {
         />
         <Text style={styles.headingText}>Error</Text>
       </View>
-      {errors.submitFailError ? (
-        <Text style={styles.errorText}>{errors.submitFailError}</Text>
-      ) : null}
-      {errors.emailError ? (
-        <Text style={styles.errorText}>{errors.emailError}</Text>
-      ) : null}
-      {errors.passwordError ? (
-        <Text style={styles.errorText}>{errors.passwordError}</Text>
-      ) : null}
-      {errors.passwordRepeatError ? (
-        <Text style={styles.errorText}>{errors.passwordRepeatError}</Text>
-      ) : null}
-      {errors.usernameError ? (
-        <Text style={styles.errorText}>{errors.usernameError}</Text>
-      ) : null}
+      {renderErrors}
     </View>
   );
 };

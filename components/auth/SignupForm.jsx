@@ -79,7 +79,7 @@ const SignupForm = ({ onError }) => {
       );
 
       authCtx.loginUser(token);
-      navigation.navigate("Home");
+      navigation.navigate("Account");
     } catch (error) {
       setIsAuthenticating(false);
 
