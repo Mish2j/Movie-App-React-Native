@@ -12,7 +12,7 @@ export default BodyWrapper;
 
 const styles = StyleSheet.create({
   container: {
-    paddingHorizontal: 8,
     flex: 1,
+    paddingHorizontal: 8,
   },
 });

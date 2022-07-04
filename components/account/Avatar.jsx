@@ -4,6 +4,7 @@ import { View, Image, StyleSheet } from "react-native";
 import {
   launchCameraAsync,
   useCameraPermissions,
+  useMediaLibraryPermissions,
   PermissionStatus,
   launchImageLibraryAsync,
 } from "expo-image-picker";
@@ -14,55 +15,53 @@ import TextButton from "../UI/TextButton";
 import IconButton from "../UI/IconButton";
 
 const Avatar = ({ imgURL, onSave, onUpdate }) => {
-  const [status, requestPermission] = useCameraPermissions();
+  const [cameraPermissionStatus, requestCameraPermission] =
+    useCameraPermissions();
+  const [photosPermissionStatus, requestPhotosPermission] =
+    useMediaLibraryPermissions();
   const [isUpdating, setIsUpdating] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
-  // console.log("Avatar", imgURL);
-  const verifyPermissions = async () => {
-    if (status.status === PermissionStatus.UNDETERMINED) {
-      const response = await requestPermission();
+  // const [newImgURI, setNewImgURI] = useState("");
 
+  const verifyPermissions = async (targetDeviceFeature, requestPermission) => {
+    if (targetDeviceFeature.status === PermissionStatus.UNDETERMINED) {
+      const response = await requestPermission();
       return response.granted;
     }
-
-    if (status.status === PermissionStatus.DENIED) {
-      console.log("Operation Failed!");
-      return false;
-    }
-
+    if (targetDeviceFeature.status === PermissionStatus.DENIED) return false;
     return true;
   };
 
-  // TODO REFACTOR
-  const openCamera = async () => {
-    const hasPermission = await verifyPermissions();
+  const openDeviceFeature = async (targetFeature) => {
+    let hasPermission;
+
+    if (targetFeature === "CAMERA") {
+      hasPermission = await verifyPermissions(
+        cameraPermissionStatus,
+        requestCameraPermission
+      );
+    } else {
+      hasPermission = await verifyPermissions(
+        photosPermissionStatus,
+        requestPhotosPermission
+      );
+    }
 
     if (!hasPermission) {
       cancelChangesHandler();
       return;
     }
 
-    const image = await launchCameraAsync({
+    const imageOptions = {
       allowsEditing: true,
       aspect: [4, 3],
       quality: 0.5,
-    });
+    };
 
-    if (image.cancelled) {
-      cancelChangesHandler();
-      return;
-    }
-    onUpdate(image.uri);
-    setIsSaving(true);
-  };
-
-  const openImageLibrary = async () => {
-    // add permissions
-    const image = await launchImageLibraryAsync({
-      allowsEditing: true,
-      aspect: [4, 3],
-      quality: 0.5,
-    });
+    const image =
+      (await targetFeature) === "CAMERA"
+        ? launchCameraAsync(imageOptions)
+        : launchImageLibraryAsync(imageOptions);
 
     if (image.cancelled) {
       cancelChangesHandler();
@@ -129,14 +128,14 @@ const Avatar = ({ imgURL, onSave, onUpdate }) => {
             iconName="camera-outline"
             iconColor={COLORS.primaryDark}
             iconSize={22}
-            onPress={openCamera}
+            onPress={openDeviceFeature.bind(null, "CAMERA")}
             containerStyle={styles.imgPickerBtn}
           />
           <IconButton
             iconName="images-outline"
             iconColor={COLORS.primaryDark}
             iconSize={22}
-            onPress={openImageLibrary}
+            onPress={openDeviceFeature.bind(null, "PHOTOS")}
             containerStyle={styles.imgPickerBtn}
           />
         </View>
@@ -149,7 +148,6 @@ export default Avatar;
 
 const styles = StyleSheet.create({
   profileInfoContainer: {
-    marginTop: -50,
     marginBottom: 50,
   },
   profileImage: {
@@ -163,7 +161,6 @@ const styles = StyleSheet.create({
     alignSelf: "center",
     marginBottom: 20,
     marginHorizontal: 20,
-    backgroundColor: "red",
   },
   imgPickerButtons: {
     flexDirection: "row",

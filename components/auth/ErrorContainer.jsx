@@ -5,9 +5,11 @@ import { COLORS } from "../../constants/styles";
 import { Ionicons } from "@expo/vector-icons";
 
 const ErrorContainer = ({ errors }) => {
-  const renderErrors = Object.keys(errors).map((errorProp) =>
+  const renderErrors = Object.keys(errors).map((errorProp, i) =>
     errors[errorProp] ? (
-      <Text style={styles.errorText}>{errors[errorProp]}</Text>
+      <Text key={i} style={styles.errorText}>
+        {errors[errorProp]}
+      </Text>
     ) : null
   );
 

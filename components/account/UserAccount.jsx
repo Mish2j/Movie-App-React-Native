@@ -1,5 +1,12 @@
 import { useReducer, useState, useContext } from "react";
-import { Alert, View, StyleSheet } from "react-native";
+import {
+  Alert,
+  View,
+  StyleSheet,
+  KeyboardAvoidingView,
+  ScrollView,
+  Platform,
+} from "react-native";
 
 import * as reducer from "../../reducers/index";
 import { COLORS } from "../../constants/styles";
@@ -29,7 +36,6 @@ import UserData from "./UserData";
 import Avatar from "./Avatar";
 
 const UserAccount = () => {
-  console.log("rendered");
   const [signingout, setSigningout] = useState(false);
   const authCtx = useContext(AuthContext);
   const userData = getUserProfile();
@@ -69,7 +75,7 @@ const UserAccount = () => {
       setIsUpdating(true);
       await handleAsync(currentPassword, updatedValue);
 
-      Alert.alert("Success", NOTIFICATION.INFO_CHANGED);
+      Alert.alert("Account update", NOTIFICATION.INFO_CHANGED);
     } catch (error) {
       let errMsg = serverErrorHandler(error.message);
       Alert.alert("Error!", errMsg);
@@ -151,8 +157,7 @@ const UserAccount = () => {
       setIsUpdating(true);
       await updateUserAvatar(accountDetails.imgURI);
     } catch (error) {
-      console.log(error);
-      // Alert.alert("Error!", error.message);
+      Alert.alert("Error!", error.message);
     } finally {
       dispatch(reducer.setNewAvatar(""));
       setIsUpdating(false);
@@ -203,62 +208,72 @@ const UserAccount = () => {
   };
 
   return (
-    <BodyWrapper color={COLORS.primaryDark}>
-      {isUpdating ? (
-        <Loader />
-      ) : (
-        <View style={styles.container}>
-          <Avatar
-            onUpdate={updateAvatarState}
-            onSave={saveNewAvatar}
-            imgURL={userData.photoURL}
-          />
+    <KeyboardAvoidingView
+      style={styles.screen}
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+    >
+      <BodyWrapper color={COLORS.primaryDark}>
+        {isUpdating ? (
+          <Loader />
+        ) : (
+          <ScrollView style={styles.screen}>
+            <View style={styles.container}>
+              <Avatar
+                onUpdate={updateAvatarState}
+                onSave={saveNewAvatar}
+                imgURL={userData.photoURL}
+              />
 
-          <UserData
-            onDataUpdate={updateEmailState}
-            onSave={saveNewEmail}
-            label="Email"
-            userData={userData.email}
-          />
-          <UserData
-            onDataUpdate={updatePasswordState}
-            onSave={saveNewPassword}
-            label="Password"
-            userData="********"
-          />
-          <UserData
-            onDataUpdate={updateUsernameState}
-            onSave={saveNewUsername}
-            label="Username"
-            userData={userData.username || "anonymous"}
-          />
+              <UserData
+                onDataUpdate={updateEmailState}
+                onSave={saveNewEmail}
+                label="Email"
+                userData={userData.email}
+              />
+              <UserData
+                onDataUpdate={updatePasswordState}
+                onSave={saveNewPassword}
+                label="Password"
+                userData="********"
+              />
+              <UserData
+                onDataUpdate={updateUsernameState}
+                onSave={saveNewUsername}
+                label="Username"
+                userData={userData.username || "anonymous"}
+              />
 
-          <IconButton
-            containerStyle={styles.signOutBtn}
-            iconName="log-out-outline"
-            iconSize={20}
-            iconColor={COLORS.textDark}
-            text={signingout ? "Wait..." : "Sign Out"}
-            onPress={signOutHandler}
-          />
-          <TextButton
-            onPress={deleteAccountHandler}
-            text="Delete my account"
-            color={COLORS.dangerLight}
-            containerStyle={styles.deleteBtn}
-          />
-        </View>
-      )}
-    </BodyWrapper>
+              <IconButton
+                containerStyle={styles.signOutBtn}
+                iconName="log-out-outline"
+                iconSize={20}
+                iconColor={COLORS.textDark}
+                text={signingout ? "Wait..." : "Sign Out"}
+                onPress={signOutHandler}
+              />
+              <TextButton
+                onPress={deleteAccountHandler}
+                text="Delete my account"
+                color={COLORS.dangerLight}
+                containerStyle={styles.deleteBtn}
+              />
+            </View>
+          </ScrollView>
+        )}
+      </BodyWrapper>
+    </KeyboardAvoidingView>
   );
 };
 
 export default UserAccount;
 
 const styles = StyleSheet.create({
+  screen: {
+    flex: 1,
+  },
   container: {
     flex: 1,
-    justifyContent: "center",
+    paddingVertical: 50,
   },
   signOutBtn: {
     marginTop: 50,

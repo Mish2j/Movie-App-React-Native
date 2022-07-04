@@ -1,5 +1,11 @@
 import { useEffect, useState } from "react";
-import { View, StyleSheet, ScrollView } from "react-native";
+import {
+  View,
+  StyleSheet,
+  ScrollView,
+  KeyboardAvoidingView,
+  Platform,
+} from "react-native";
 import { useNavigation } from "@react-navigation/native";
 
 import { COLORS } from "../../constants/styles";
@@ -63,30 +69,35 @@ const AuthForm = () => {
   };
 
   return (
-    <BodyWrapper color={COLORS.primaryDark}>
-      <ScrollView style={styles.scrollContainer}>
-        <View style={styles.container}>
-          {formHasError && <ErrorContainer errors={errors} />}
-          <View style={styles.box}>
-            {isLogin && <LoginForm onError={handleErrors} />}
-            {!isLogin && <SignupForm onError={handleErrors} />}
-            <TextButton
-              onPress={switchFormHandler}
-              containerStyle={styles.newUserBtnContainer}
-              color={COLORS.textDark}
-              text={isLogin ? "Create a new user" : "Already have an account"}
-            />
+    <KeyboardAvoidingView
+      style={styles.screen}
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+    >
+      <BodyWrapper color={COLORS.primaryDark}>
+        <ScrollView style={styles.screen}>
+          <View style={styles.container}>
+            {formHasError && <ErrorContainer errors={errors} />}
+            <View style={styles.box}>
+              {isLogin && <LoginForm onError={handleErrors} />}
+              {!isLogin && <SignupForm onError={handleErrors} />}
+              <TextButton
+                onPress={switchFormHandler}
+                containerStyle={styles.newUserBtnContainer}
+                color={COLORS.textDark}
+                text={isLogin ? "Create a new user" : "Already have an account"}
+              />
+            </View>
           </View>
-        </View>
-      </ScrollView>
-    </BodyWrapper>
+        </ScrollView>
+      </BodyWrapper>
+    </KeyboardAvoidingView>
   );
 };
 
 export default AuthForm;
 
 const styles = StyleSheet.create({
-  scrollContainer: {
+  screen: {
     flex: 1,
   },
   container: {

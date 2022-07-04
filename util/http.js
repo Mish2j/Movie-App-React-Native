@@ -56,7 +56,7 @@ export const getMovieDetails = async (movieId) => {
   return await fetchData(`${MOVIE_DETAIL_BASE}${movieId}${MOVIE_DETAIL_QUERY}`);
 };
 
-export const createUser = async (email, password, fullName) => {
+export const createUser = async (email, password, username) => {
   try {
     const response = await createUserWithEmailAndPassword(
       authentication,
@@ -67,8 +67,8 @@ export const createUser = async (email, password, fullName) => {
     const user = authentication.currentUser;
     if (!user) return;
 
-    updateProfile(user, {
-      displayName: fullName,
+    await updateProfile(user, {
+      displayName: username,
     });
 
     return response._tokenResponse.idToken;
@@ -134,7 +134,6 @@ export const updateUserAvatar = async (newImageURI) => {
       photoURL: newImageURI,
     });
   } catch (error) {
-    console.log(error);
     throw new Error(error.code);
   }
 };
