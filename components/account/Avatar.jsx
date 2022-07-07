@@ -20,8 +20,6 @@ const Avatar = ({ imgURL, onSave, onUpdate }) => {
   const [photosPermissionStatus, requestPhotosPermission] =
     useMediaLibraryPermissions();
   const [isUpdating, setIsUpdating] = useState(false);
-  const [isSaving, setIsSaving] = useState(false);
-  // const [newImgURI, setNewImgURI] = useState("");
 
   const verifyPermissions = async (targetDeviceFeature, requestPermission) => {
     if (targetDeviceFeature.status === PermissionStatus.UNDETERMINED) {
@@ -33,7 +31,7 @@ const Avatar = ({ imgURL, onSave, onUpdate }) => {
   };
 
   const openDeviceFeature = async (targetFeature) => {
-    let hasPermission;
+    let hasPermission = false;
 
     if (targetFeature === "CAMERA") {
       hasPermission = await verifyPermissions(
@@ -59,20 +57,20 @@ const Avatar = ({ imgURL, onSave, onUpdate }) => {
     };
 
     const image =
-      (await targetFeature) === "CAMERA"
-        ? launchCameraAsync(imageOptions)
-        : launchImageLibraryAsync(imageOptions);
+      targetFeature === "CAMERA"
+        ? await launchCameraAsync(imageOptions)
+        : await launchImageLibraryAsync(imageOptions);
 
     if (image.cancelled) {
       cancelChangesHandler();
       return;
     }
+
     onUpdate(image.uri);
-    setIsSaving(true);
   };
 
   const cancelChangesHandler = () => {
-    setIsSaving(false);
+    onUpdate("");
     setIsUpdating(false);
   };
 
@@ -83,13 +81,16 @@ const Avatar = ({ imgURL, onSave, onUpdate }) => {
 
   return (
     <View style={styles.profileInfoContainer}>
-      <Image
-        source={
-          imgURL ? { uri: imgURL } : require("../../assets/default-avatar.jpg")
-        }
-        style={styles.profileImage}
-      />
-
+      {
+        <Image
+          source={
+            imgURL
+              ? { uri: imgURL }
+              : require("../../assets/default-avatar.jpg")
+          }
+          style={styles.profileImage}
+        />
+      }
       {!isUpdating && (
         <TextButton
           onPress={() => setIsUpdating(true)}
@@ -98,47 +99,39 @@ const Avatar = ({ imgURL, onSave, onUpdate }) => {
           containerStyle={styles.avatarBtn}
         />
       )}
-      {isSaving && (
-        <View style={styles.imgPickerButtons}>
-          <TextButton
-            onPress={saveNewImageHandler}
-            color="lightblue"
-            text="Save"
-            containerStyle={styles.avatarBtn}
-          />
-          <TextButton
-            onPress={cancelChangesHandler}
-            color="lightblue"
-            text="Cancel"
-            containerStyle={styles.avatarBtn}
-          />
-        </View>
-      )}
-      {!isSaving && isUpdating && (
-        <TextButton
-          onPress={cancelChangesHandler}
-          color="lightblue"
-          text="Cancel"
-          containerStyle={styles.avatarBtn}
-        />
-      )}
       {isUpdating && (
-        <View style={styles.imgPickerButtons}>
-          <IconButton
-            iconName="camera-outline"
-            iconColor={COLORS.primaryDark}
-            iconSize={22}
-            onPress={openDeviceFeature.bind(null, "CAMERA")}
-            containerStyle={styles.imgPickerBtn}
-          />
-          <IconButton
-            iconName="images-outline"
-            iconColor={COLORS.primaryDark}
-            iconSize={22}
-            onPress={openDeviceFeature.bind(null, "PHOTOS")}
-            containerStyle={styles.imgPickerBtn}
-          />
-        </View>
+        <>
+          <View style={styles.imgPickerButtons}>
+            <TextButton
+              onPress={saveNewImageHandler}
+              color={COLORS.lightBlue}
+              text="Save"
+              containerStyle={styles.avatarBtn}
+            />
+            <TextButton
+              onPress={cancelChangesHandler}
+              color={COLORS.lightBlue}
+              text="Cancel"
+              containerStyle={styles.avatarBtn}
+            />
+          </View>
+          <View style={styles.imgPickerButtons}>
+            <IconButton
+              iconName="camera-outline"
+              iconColor={COLORS.primaryDark}
+              iconSize={22}
+              onPress={openDeviceFeature.bind(null, "CAMERA")}
+              containerStyle={styles.imgPickerBtn}
+            />
+            <IconButton
+              iconName="images-outline"
+              iconColor={COLORS.primaryDark}
+              iconSize={22}
+              onPress={openDeviceFeature.bind(null, "PHOTOS")}
+              containerStyle={styles.imgPickerBtn}
+            />
+          </View>
+        </>
       )}
     </View>
   );

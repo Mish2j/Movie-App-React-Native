@@ -2,7 +2,7 @@ import { View, StyleSheet } from "react-native";
 
 const BodyWrapper = ({ children, color }) => {
   return (
-    <View style={[styles.container, { backgroundColor: color }]}>
+    <View style={{ ...styles.container, backgroundColor: color }}>
       {children}
     </View>
   );

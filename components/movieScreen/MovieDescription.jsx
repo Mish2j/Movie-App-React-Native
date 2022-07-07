@@ -1,4 +1,4 @@
-import { StyleSheet, Text } from "react-native";
+import { StyleSheet, Text, ScrollView, View } from "react-native";
 import { useRoute } from "@react-navigation/native";
 
 import { COLORS } from "../../constants/styles";
@@ -8,12 +8,18 @@ import Title from "../UI/Title";
 
 const MovieDescription = () => {
   const route = useRoute();
-  const movieData = route.params?.movieData;
+  const { title, overview } = route.params?.movieData;
 
   return (
     <BodyWrapper color={COLORS.primaryDark}>
-      <Title text={movieData.title} />
-      <Text style={styles.movieOverview}>{movieData.overview}</Text>
+      <ScrollView style={{ flex: 1 }}>
+        <View style={styles.innerWrapper}>
+          <Title text={title ? title : "Title is not available."} />
+          <Text style={styles.movieOverview}>
+            {overview ? overview : "Summary is not available."}
+          </Text>
+        </View>
+      </ScrollView>
     </BodyWrapper>
   );
 };
@@ -24,5 +30,8 @@ const styles = StyleSheet.create({
   movieOverview: {
     color: COLORS.textLight,
     fontSize: 17,
+  },
+  innerWrapper: {
+    paddingBottom: 100,
   },
 });

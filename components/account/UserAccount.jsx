@@ -221,7 +221,11 @@ const UserAccount = () => {
               <Avatar
                 onUpdate={updateAvatarState}
                 onSave={saveNewAvatar}
-                imgURL={userData.photoURL}
+                imgURL={
+                  accountDetails.imgURI
+                    ? accountDetails.imgURI
+                    : userData.photoURL
+                }
               />
 
               <UserData

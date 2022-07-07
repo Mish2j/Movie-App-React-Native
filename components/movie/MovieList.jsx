@@ -49,6 +49,7 @@ const MovieList = ({ heading, isHorizontal = false, movies, isLoading }) => {
   return (
     <View style={styles.container}>
       {heading && <Title text={heading} />}
+
       <FlatList
         numColumns={!isHorizontal && 3}
         data={movies}
@@ -64,6 +65,7 @@ export default MovieList;
 
 const styles = StyleSheet.create({
   container: {
+    flex: 1,
     marginBottom: 25,
   },
   imageContainer: {

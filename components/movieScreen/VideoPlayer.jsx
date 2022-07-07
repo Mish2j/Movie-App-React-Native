@@ -30,7 +30,6 @@ const VideoPlayer = () => {
     const getMovieVideo = async () => {
       try {
         const movieDetails = await getMovieDetails(movieId);
-
         setVideoId(movieDetails.videos?.results[0]?.key);
       } catch (error) {
         Alert.alert("Error", error.message);
@@ -76,7 +75,7 @@ const VideoPlayer = () => {
             height={"100%"}
             width={"100%"}
             play={isPlaying}
-            resizeMode="contain"
+            resizeMode="cover"
             videoId={videoId}
           />
         )}
@@ -116,7 +115,7 @@ const styles = StyleSheet.create({
   videoContainer: {
     width: "100%",
     height: 218,
-    backgroundColor: COLORS.primaryLight,
+    backgroundColor: COLORS.primaryDark,
     marginBottom: 10,
   },
   video: {
