@@ -43,13 +43,7 @@ NOTE you need special tools to run this app. -->
    - To watch or learn more about the movie, tap the movie poster.
    - Tap the "Categories" tab to select the category of the movie you want to watch.
 
-     ![My Image](./assets/Home-screen.png) 
-     
-     <img
-  src="./assets/Home-screen.png"
-  alt="Alt text"
-  title="Optional title"
-  style="display: inline-block; margin: 0 auto; max-width: 300px">
+     <img src="./assets/Home-screen.png" alt="Movie Streaming Mobile App" style="width: 250px; height: 400;">
 
 2. Search movie
 
@@ -57,13 +51,16 @@ NOTE you need special tools to run this app. -->
    - Enter the title of your favorite movie and list of movies will be displayed below the search bar.
    - To watch or learn more about the movie, tap the movie poster.
 
+     <img src="./assets/Search-screen.png" alt="Movie Streaming Mobile App" style="width: 250px; height: 400;">
+
 3. Movie
 
    - Tap the play/pause button or anywhere in the video area to play/pause the movie.
    - To save the movie to the "Watch Later" list, tap the "My List" button.
    - To remove a movie from the list, click the "Saved" button.
+
+     <img src="./assets/Movie-screen.png" alt="Movie Streaming Mobile App" style="width: 250px; height: 400;">
    
-   ![My Image](./assets/Home-screen.png) 
    
 4. Profile
 
