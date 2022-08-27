@@ -55,6 +55,8 @@ NOTE you need special tools to run this app. -->
    - To save the movie to the "Watch Later" list, tap the "My List" button.
    - To remove a movie from the list, click the "Saved" button.
    
+   ![My Image](./assets/Home-screen.png) 
+   
 4. Profile
 
    - To navigate to your Profile, tap the person icon in the top right corner.
