@@ -43,6 +43,14 @@ NOTE you need special tools to run this app. -->
    - To watch or learn more about the movie, tap the movie poster.
    - Tap the "Categories" tab to select the category of the movie you want to watch.
 
+     ![My Image](./assets/Home-screen.png) 
+     
+     <img
+  src="./assets/Home-screen.png"
+  alt="Alt text"
+  title="Optional title"
+  style="display: inline-block; margin: 0 auto; max-width: 300px">
+
 2. Search movie
 
    - Tap the "Search" icon on the bottom tab and a new screen will open with a search bar at the very top. 
