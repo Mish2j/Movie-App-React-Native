@@ -41,7 +41,7 @@ const UserAccount = () => {
   const userData = getUserProfile();
 
   const [isUpdating, setIsUpdating] = useState(false);
-
+  console.log("Acount render");
   const initialState = {
     username: "",
     email: "",
